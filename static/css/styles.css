@@ -497,3 +497,208 @@ body, html, .app-container, .main-content, .document-area {
     visibility: visible !important;
     opacity: 1 !important;
 }
+/* ========================================
+   PARCHE: SCROLL EN LANDSCAPE
+   Arregla el scroll del documento en móvil horizontal
+   ======================================== */
+
+/* CRÍTICO: Asegurar scroll en TODAS las orientaciones */
+#documentContainer {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    height: 100% !important;
+    position: relative !important;
+}
+
+/* En landscape, ajustar heights para permitir scroll */
+@media screen and (orientation: landscape) and (max-width: 1024px) {
+    
+    /* Contenedor principal debe tener height definido */
+    .main-container {
+        height: 100vh !important;
+        overflow: hidden !important;
+    }
+    
+    /* Document container debe ser scrollable */
+    #documentContainer {
+        height: calc(100vh - 140px) !important; /* Header + Toolbar */
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        position: relative !important;
+    }
+    
+    /* Document viewer también */
+    #documentViewer {
+        height: 100% !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    /* Text content que contiene el documento */
+    #textContent {
+        min-height: 100% !important;
+        overflow: visible !important;
+        position: relative !important;
+    }
+    
+    /* Canvas debe respetar el container */
+    #annotationCanvas {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        pointer-events: auto !important;
+    }
+    
+    /* Upload prompt en landscape */
+    #uploadPrompt {
+        height: calc(100vh - 140px) !important;
+        overflow: auto !important;
+    }
+}
+
+/* LANDSCAPE MÓVIL - Altura reducida (<500px) */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+    
+    #documentContainer {
+        height: calc(100vh - 120px) !important; /* Toolbar más pequeño */
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    /* Optimizar espacio vertical */
+    .header {
+        min-height: 48px !important;
+        padding: 8px 12px !important;
+    }
+    
+    .toolbar {
+        min-height: 56px !important;
+        padding: 8px !important;
+    }
+    
+    /* Asegurar que FABs no tapen contenido */
+    .fab-container {
+        bottom: 70px !important; /* Encima del toolbar */
+    }
+}
+
+/* PORTRAIT - También asegurar scroll */
+@media screen and (orientation: portrait) and (max-width: 768px) {
+    
+    #documentContainer {
+        height: calc(100vh - 180px) !important; /* Header + Toolbar bottom */
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    #documentViewer {
+        height: 100% !important;
+        overflow-y: auto !important;
+    }
+}
+
+/* IMPORTANTE: Prevenir conflictos con otros estilos */
+body {
+    overflow: hidden !important; /* Solo el documentContainer debe hacer scroll */
+}
+
+html {
+    overflow: hidden !important;
+    height: 100% !important;
+}
+
+/* Asegurar que imágenes no rompan el scroll */
+#textContent img {
+    max-width: 100% !important;
+    height: auto !important;
+    display: block !important;
+}
+
+/* Canvas overlay - no debe impedir scroll */
+#annotationCanvas {
+    pointer-events: auto !important;
+    touch-action: none !important; /* Para dibujar */
+}
+
+/* Pero el container debe permitir scroll cuando NO se está dibujando */
+#documentContainer {
+    touch-action: pan-y !important; /* Permitir scroll vertical */
+}
+
+/* DEBUG: Añade borde rojo si hay problemas (remover después) */
+/*
+#documentContainer {
+    border: 3px solid red !important;
+}
+#documentViewer {
+    border: 3px solid blue !important;
+}
+#textContent {
+    border: 3px solid green !important;
+}
+*/
+
+/* FIX: Safari iOS específico */
+@supports (-webkit-touch-callout: none) {
+    #documentContainer {
+        -webkit-overflow-scrolling: touch !important;
+        overflow-y: scroll !important; /* Force scroll */
+    }
+}
+
+/* FIX: Para dispositivos con notch */
+@supports (padding: max(0px)) {
+    @media screen and (orientation: landscape) {
+        #documentContainer {
+            height: calc(100vh - 140px - env(safe-area-inset-bottom)) !important;
+            padding-left: env(safe-area-inset-left) !important;
+            padding-right: env(safe-area-inset-right) !important;
+        }
+    }
+}
+
+/* CRÍTICO: Asegurar que el scroll funcione */
+#documentContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+#documentContainer::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+#documentContainer::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+#documentContainer::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* Indicador visual de que es scrollable */
+#documentContainer::before {
+    content: '';
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), transparent);
+    z-index: 100;
+    pointer-events: none;
+}
+
+#documentContainer::after {
+    content: '';
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(to top, rgba(0,0,0,0.1), transparent);
+    z-index: 100;
+    pointer-events: none;
+}
