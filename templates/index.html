@@ -16,15 +16,21 @@
             </div>
             <div class="user-actions">
                 <input type="file" id="fileInput" accept=".pdf,.docx,.txt,.png,.jpg" hidden>
-                <button id="selectFileBtn" class="tool-btn active"><i class="fas fa-upload"></i> Subir</button>
-                <button id="saveBtn" class="tool-btn"><i class="fas fa-save"></i> Guardar</button>
+                <button id="selectFileBtn" class="tool-btn active"><i class="fas fa-upload"></i> <span class="desktop-only">Subir</span></button>
+                <button id="saveBtn" class="tool-btn"><i class="fas fa-save"></i> <span class="desktop-only">Guardar</span></button>
             </div>
         </header>
 
         <div class="main-content">
+            
             <aside class="toolbar">
+                
+                <button class="tool-btn mobile-only" onclick="toggleMobileChat()" style="margin-right: 10px;">
+                    <i class="fas fa-comment-dots"></i>
+                </button>
+
                 <div class="tool-group">
-                    <h4>Color</h4>
+                    <h4 class="desktop-only">Color</h4>
                     <div class="color-palette">
                         <div class="color-btn active" style="background:#FFEB3B" data-color="#FFEB3B"></div>
                         <div class="color-btn" style="background:#F48FB1" data-color="#F48FB1"></div>
@@ -35,29 +41,39 @@
                 </div>
 
                 <div class="tool-group">
-                    <h4>Herramienta</h4>
+                    <h4 class="desktop-only">Herramienta</h4>
                     <div class="tool-buttons">
-                        <button class="tool-btn active" data-tool="pen"><i class="fas fa-pen"></i> <span>Lápiz</span></button>
-                        <button class="tool-btn" data-tool="highlighter"><i class="fas fa-highlighter"></i> <span>Resaltar</span></button>
-                        <button class="tool-btn" data-tool="text"><i class="fas fa-font"></i> <span>Texto</span></button>
-                        <button class="tool-btn" data-tool="eraser"><i class="fas fa-eraser"></i> <span>Borrar</span></button>
+                        <button class="tool-btn active" data-tool="pen"><i class="fas fa-pen"></i> <span class="desktop-only">Lápiz</span></button>
+                        <button class="tool-btn" data-tool="highlighter"><i class="fas fa-highlighter"></i> <span class="desktop-only">Resaltar</span></button>
+                        <button class="tool-btn" data-tool="text"><i class="fas fa-font"></i> <span class="desktop-only">Texto</span></button>
+                        <button class="tool-btn" data-tool="eraser"><i class="fas fa-eraser"></i> <span class="desktop-only">Borrar</span></button>
                     </div>
                 </div>
 
-                <div class="tool-group">
+                <div class="tool-group desktop-only">
                     <h4>Grosor: <span id="brushSizeValue">3px</span></h4>
                     <input type="range" id="brushSize" min="1" max="20" value="3" style="width:100%">
                 </div>
 
                 <div class="tool-group">
-                    <button id="clearAllBtn" class="tool-btn" style="color:red; border-color:red"><i class="fas fa-trash"></i> <span>Limpiar Página</span></button>
+                    <button id="clearAllBtn" class="tool-btn" style="color:red; border-color:red">
+                        <i class="fas fa-trash"></i> <span class="desktop-only">Limpiar</span>
+                    </button>
                 </div>
 
-                <div class="chatbot-section">
-                    <h3><i class="fas fa-robot"></i> IA Chat</h3>
+                <div class="chatbot-section" id="chatbotSection">
+                    
+                    <div class="mobile-only" style="width:100%; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid #eee;">
+                        <h3 style="margin:0; color:#4361ee;">IA Chat</h3>
+                        <button onclick="toggleMobileChat()" style="background:none; border:none; font-size:1.5rem;"><i class="fas fa-times"></i></button>
+                    </div>
+
+                    <h3 class="desktop-only"><i class="fas fa-robot"></i> IA Chat</h3>
+                    
                     <div class="chatbot-messages" id="chatbotMessages">
                         <div class="message bot">Hola, sube un documento para empezar.</div>
                     </div>
+                    
                     <div class="chatbot-input">
                         <input type="text" id="chatbotInput" placeholder="...">
                         <button id="sendQuestionBtn" class="tool-btn"><i class="fas fa-paper-plane"></i></button>
@@ -84,16 +100,21 @@
                     </div>
                     
                     <div class="document-viewer" id="documentViewer" style="display:none;">
-                        <div class="text-content" id="textContent">
-                            </div>
+                        <div class="text-content" id="textContent"></div>
                         <canvas id="annotationCanvas"></canvas>
                     </div>
                 </div>
             </main>
 
             <aside class="documents-panel" id="rightPanel">
+                
+                <div class="mobile-only" style="width:100%; display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding-bottom:10px; border-bottom:1px solid #eee;">
+                    <h3 style="margin:0; color:#333;">Archivos</h3>
+                    <button onclick="toggleMobileDocs()" style="background:none; border:none; font-size:1.5rem; color:#666;"><i class="fas fa-times"></i></button>
+                </div>
+
                 <div style="margin-bottom: 20px; border-bottom: 1px solid #dee2e6; padding-bottom: 10px;">
-                    <h3><i class="fas fa-folder"></i> Guardados</h3>
+                    <h3 class="desktop-only"><i class="fas fa-folder"></i> Guardados</h3>
                     <div id="documentsList" style="max-height: 300px; overflow-y: auto;">
                         <div class="empty-docs" style="padding:10px; color:#999; text-align:center;">Cargando...</div>
                     </div>
@@ -107,6 +128,35 @@
         </div>
     </div>
 
+    <button class="mobile-fab mobile-only" onclick="toggleMobileDocs()">
+        <i class="fas fa-folder-open"></i>
+    </button>
+
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    
+    <script>
+        function toggleMobileDocs() {
+            document.getElementById('rightPanel').classList.toggle('open');
+        }
+        
+        function toggleMobileChat() {
+            // Buscamos la sección del chat
+            const chatSection = document.getElementById('chatbotSection');
+            chatSection.classList.toggle('open');
+            
+            // Forzar visualización flex si se abre (por si el CSS lo tenía oculto)
+            if (chatSection.classList.contains('open')) {
+                chatSection.style.display = 'flex';
+            } else {
+                // Si estamos en móvil, al cerrar volvemos a dejar que el CSS controle el display
+                // (En desktop siempre es flex, en móvil es none por defecto)
+                if (window.innerWidth <= 900) {
+                    chatSection.style.display = 'none';
+                } else {
+                    chatSection.style.display = 'flex';
+                }
+            }
+        }
+    </script>
 </body>
 </html>
