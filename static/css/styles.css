@@ -1,495 +1,277 @@
-/* ========================================
-   ANOTADOR INTELIGENTE - STYLES.CSS
-   ======================================== */
+/* ============================================================
+   ESTILOS ROBUSTOS (PC, TABLET, MÓVIL, ORIENTACIÓN MIXTA)
+   ============================================================ */
 
-/* --- 1. RESET Y VARIABLES --- */
+/* --- 1. CONFIGURACIÓN BASE --- */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0; padding: 0; box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent; /* Quitar brillo azul al tocar en móvil */
 }
 
 :root {
     --primary: #4361ee;
-    --secondary: #3a0ca3;
-    --success: #4CAF50;
-    --danger: #f44336;
-    --warning: #ff9800;
-    --bg-light: #f5f7fb;
-    --bg-dark: #525659;
-    --border: #dee2e6;
-    --text-dark: #333;
-    --text-light: #666;
-    
-    /* Dimensiones PC */
-    --sidebar-width: 280px;
-    --header-height: 60px;
-    
-    /* Dimensiones Móvil */
-    --mobile-nav-height: 70px;
+    --bg-light: #f4f6f8;
+    --bg-dark: #3a3d40;
+    --border: #e0e0e0;
+    --sidebar-w: 280px;
+    --header-h: 60px;
+    --toolbar-h: 70px; /* Altura barra inferior móvil */
 }
 
 body {
     background-color: var(--bg-light);
-    height: 100vh;
+    /* Usamos dvh para evitar problemas con la barra de URL de Safari/Chrome móvil */
+    height: 100dvh; 
     width: 100vw;
-    overflow: hidden; 
-    /* QUITADO: touch-action: none; -> Esto bloqueaba el scroll en iPad */
+    overflow: hidden; /* La app principal no scrollea, lo hacen los paneles internos */
 }
 
-/* --- 2. CONTENEDOR PRINCIPAL --- */
 .app-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    width: 100vw;
+    display: flex; flex-direction: column; height: 100%; width: 100%;
 }
 
-/* --- 3. HEADER SUPERIOR --- */
+/* --- 2. HEADER --- */
 .app-header {
-    height: var(--header-height);
-    background: white;
-    padding: 0 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid var(--border);
-    flex-shrink: 0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    z-index: 100;
+    height: var(--header-h); background: white; padding: 0 15px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 20;
 }
+.logo { font-size: 1.2rem; font-weight: 700; color: var(--primary); display: flex; gap: 8px; align-items: center; }
+.logo h1 { font-size: 1.1rem; }
 
-.logo {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--primary);
-    display: flex;
-    gap: 10px;
-    align-items: center;
+/* Botones del Header (Subir/Guardar) */
+.user-actions { display: flex; gap: 8px; }
+.header-btn {
+    padding: 8px 12px; background: var(--primary); color: white; border: none; border-radius: 6px;
+    font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 6px;
 }
+.header-btn.secondary { background: white; color: var(--primary); border: 1px solid var(--primary); }
 
-.logo i { font-size: 1.6rem; }
-
-.user-actions {
-    display: flex;
-    gap: 10px;
-}
-
-/* --- 4. LAYOUT CENTRAL (Columnas) --- */
+/* --- 3. LAYOUT CENTRAL --- */
 .main-content {
-    display: flex;
-    height: calc(100vh - var(--header-height));
+    display: flex; 
+    height: calc(100dvh - var(--header-h));
     width: 100%;
     position: relative; 
-}
-
-/* ========================================
-   5. BARRA IZQUIERDA (HERRAMIENTAS)
-   ======================================== */
-.toolbar {
-    width: var(--sidebar-width);
-    background: white;
-    border-right: 2px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    padding: 20px 15px;
-    overflow-y: auto;
-    flex-shrink: 0;
-    gap: 20px;
-    z-index: 50;
-    transition: all 0.3s ease;
-}
-
-.tool-group { margin-bottom: 10px; }
-
-.tool-group h4 {
-    font-size: 0.9rem;
-    color: var(--text-light);
-    margin-bottom: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.tool-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-/* Estilos de Botones */
-.tool-btn {
-    padding: 10px 15px;
-    border: 2px solid var(--border);
-    background: white;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.95rem;
-    color: var(--text-dark);
-    transition: all 0.2s ease;
-    font-weight: 500;
-    justify-content: flex-start;
-    min-height: 42px;
-    flex-shrink: 0; /* Evita que se aplasten en móvil */
-}
-
-.tool-btn:hover {
-    background: #f8f9fa;
-    border-color: var(--primary);
-    transform: translateX(2px);
-}
-
-.tool-btn.active {
-    background: var(--primary);
-    color: white;
-    border-color: var(--primary);
-    box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
-}
-
-.tool-btn i {
-    font-size: 1.1rem;
-    width: 24px;
-    text-align: center;
-}
-
-/* Paleta de Colores */
-.color-palette {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.color-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    border: 3px solid transparent;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    flex-shrink: 0; /* Evita que se aplasten */
-}
-
-.color-btn:hover { transform: scale(1.1); box-shadow: 0 3px 10px rgba(0,0,0,0.2); }
-.color-btn.active { border-color: #333; transform: scale(1.15); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-
-/* ========================================
-   6. SECCIÓN CHATBOT
-   ======================================== */
-.chatbot-section {
-    margin-top: auto;
-    padding-top: 20px;
-    border-top: 2px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 250px;
-}
-
-.chatbot-section h3 {
-    font-size: 1rem;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--primary);
-}
-
-.chatbot-messages {
-    flex: 1;
-    overflow-y: auto;
-    margin-bottom: 10px;
-    padding: 10px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    border: 1px solid #eee;
-}
-
-.message {
-    padding: 8px 12px;
-    border-radius: 8px;
-    max-width: 90%;
-    word-wrap: break-word;
-    font-size: 0.9rem;
-    line-height: 1.4;
-}
-
-.message.user {
-    background: var(--primary);
-    color: white;
-    align-self: flex-end;
-    border-bottom-right-radius: 2px;
-}
-
-.message.bot {
-    background: white;
-    color: var(--text-dark);
-    align-self: flex-start;
-    border: 1px solid var(--border);
-    border-bottom-left-radius: 2px;
-}
-
-.message.typing { font-style: italic; color: var(--text-light); }
-
-.chatbot-input { display: flex; gap: 8px; }
-.chatbot-input input {
-    flex: 1; padding: 8px 12px;
-    border: 2px solid var(--border); border-radius: 6px;
-    font-size: 0.9rem;
-}
-.chatbot-input input:focus { outline: none; border-color: var(--primary); }
-.chatbot-input button { min-width: 40px; padding: 0; justify-content: center; }
-
-/* ========================================
-   7. ÁREA CENTRAL (DOCUMENTO)
-   ======================================== */
-.document-area {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background: var(--bg-dark);
-    position: relative;
-    min-width: 0;
     overflow: hidden;
 }
 
+/* ============================================================
+   4. BARRA DE HERRAMIENTAS (Adaptable)
+   ============================================================ */
+.toolbar {
+    background: white; border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; 
+    z-index: 30;
+    
+    /* En PC: Barra lateral fija */
+    width: var(--sidebar-w);
+    padding: 20px;
+    overflow-y: auto; 
+    gap: 20px;
+}
+
+/* Grupos de herramientas */
+.tool-group { margin-bottom: 5px; }
+.tool-group h4 {
+    font-size: 0.75rem; color: #888; text-transform: uppercase; margin-bottom: 8px; font-weight: 600;
+}
+
+/* Botones de Herramientas */
+.tool-buttons { display: flex; flex-direction: column; gap: 8px; }
+
+.tool-btn {
+    padding: 10px; border: 1px solid var(--border); background: white; border-radius: 8px;
+    cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.9rem;
+    color: #333; transition: 0.1s; min-height: 44px; /* Tamaño mínimo táctil */
+}
+.tool-btn:active { transform: scale(0.98); }
+.tool-btn.active { background: #eef4ff; border-color: var(--primary); color: var(--primary); font-weight: 600; }
+.tool-btn i { font-size: 1.1rem; width: 24px; text-align: center; }
+
+/* Colores */
+.color-palette { display: flex; gap: 8px; flex-wrap: wrap; }
+.color-btn {
+    width: 36px; height: 36px; border-radius: 50%; border: 3px solid white; 
+    box-shadow: 0 0 0 1px #ddd; cursor: pointer; flex-shrink: 0;
+}
+.color-btn.active { transform: scale(1.15); box-shadow: 0 0 0 2px var(--primary); border-color: white; }
+
+/* Slider */
+input[type=range] { width: 100%; margin: 10px 0; }
+
+/* Chatbot en Barra (PC) */
+.chatbot-section {
+    margin-top: auto; border-top: 1px solid var(--border); padding-top: 15px;
+    display: flex; flex-direction: column; flex: 1; min-height: 250px;
+}
+.chatbot-messages {
+    flex: 1; overflow-y: auto; background: #f9f9f9; padding: 10px; border-radius: 8px;
+    margin-bottom: 10px; border: 1px solid #eee; display: flex; flex-direction: column; gap: 8px;
+}
+.message { padding: 8px; border-radius: 6px; font-size: 0.9rem; max-width: 90%; }
+.message.user { background: var(--primary); color: white; align-self: flex-end; }
+.message.bot { background: white; border: 1px solid #ddd; align-self: flex-start; }
+.chatbot-input { display: flex; gap: 5px; }
+.chatbot-input input { flex: 1; padding: 8px; border: 1px solid var(--border); border-radius: 4px; }
+
+/* ============================================================
+   5. VISOR DE DOCUMENTO (CENTRO)
+   ============================================================ */
+.document-area {
+    flex: 1; display: flex; flex-direction: column; background: var(--bg-dark);
+    position: relative; overflow: hidden; min-width: 0;
+}
+
 .document-header {
-    background: white;
-    padding: 0 20px;
-    height: 50px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid var(--border);
-    flex-shrink: 0;
+    height: 45px; background: white; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center; padding: 0 15px; flex-shrink: 0;
 }
+.doc-title { font-size: 0.9rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
 
-.document-header h3 {
-    font-size: 1rem; color: var(--text-dark);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    max-width: 300px;
-}
-
-/* Canvas Container (AQUÍ ESTÁ LA CLAVE DEL SCROLL) */
+/* AQUÍ ESTÁ EL SCROLL DEL DOCUMENTO */
 .document-container {
     flex: 1;
-    overflow-y: auto; /* Permitir scroll vertical */
-    overflow-x: auto;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 40px 20px;
-    /* Mejora el scroll en iOS */
-    -webkit-overflow-scrolling: touch; 
+    overflow: auto; /* Permite scroll en todas direcciones */
+    display: flex; justify-content: center; align-items: flex-start;
+    padding: 20px;
+    -webkit-overflow-scrolling: touch; /* Suavidad en iOS */
 }
 
-.document-container.drag-over { background: #3a4348 !important; }
-
-/* Papel Blanco */
+/* El "Papel" */
 .text-content {
-    background: white;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     position: relative;
-    min-width: 210mm; /* A4 */
-    min-height: 297mm;
-    padding: 40px;
-    border-radius: 4px;
+    /* Ajuste para que no sea gigante en móvil pero sí en PC */
+    width: 100%; max-width: 1000px; 
+    min-height: 800px; 
 }
-
-.text-content img { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+.text-content img { display: block; width: 100%; height: auto; pointer-events: none; }
 
 #annotationCanvas {
-    position: absolute; top: 0; left: 0;
-    z-index: 10;
-    /* Solo el canvas bloquea gestos para dibujar, el resto permite scroll */
+    position: absolute; top: 0; left: 0; z-index: 10;
+    /* Touch-action none SOLO en el canvas para poder dibujar sin mover la pantalla. 
+       Si tocas fuera del canvas, sí hay scroll. */
     touch-action: none; 
     cursor: crosshair;
 }
 
-/* Mensaje de Subida */
-.upload-prompt {
-    text-align: center; padding: 60px 20px; color: #ccc;
-    cursor: pointer; transition: all 0.3s ease;
-}
-.upload-prompt:hover { color: white; transform: scale(1.05); }
-.upload-prompt i { font-size: 4rem; margin-bottom: 20px; display: block; }
+.upload-prompt { text-align: center; color: #bbb; margin-top: 20%; cursor: pointer; }
+.upload-prompt i { font-size: 4rem; display: block; margin-bottom: 15px; }
 
-/* ========================================
-   8. PANEL DERECHO (ARCHIVOS)
-   ======================================== */
+/* ============================================================
+   6. PANEL DERECHO (ARCHIVOS)
+   ============================================================ */
 .documents-panel {
-    width: var(--sidebar-width);
-    background: white;
-    border-left: 2px solid var(--border);
-    padding: 20px;
-    overflow-y: auto;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    z-index: 50;
+    width: var(--sidebar-w); background: white; border-left: 1px solid var(--border);
+    display: flex; flex-direction: column; padding: 15px; gap: 15px; z-index: 30;
     transition: transform 0.3s ease;
 }
-
 .document-item {
-    padding: 12px;
-    background: #f8f9fa;
-    border: 2px solid transparent;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    padding: 10px; border: 1px solid #eee; border-radius: 6px; margin-bottom: 8px; cursor: pointer;
 }
+.document-item.active { border-color: var(--primary); background: #f0f7ff; }
+.doc-name { font-weight: 600; font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.doc-date { font-size: 0.7rem; color: #888; }
+.doc-actions { display: flex; gap: 5px; margin-top: 5px; justify-content: flex-end; }
+.action-btn { background: none; border: none; cursor: pointer; padding: 5px; font-size: 1rem; }
 
-.document-item:hover { background: #e9ecef; border-color: var(--primary); transform: translateX(3px); }
-.document-item.active { border-color: var(--primary); background: #eef4ff; }
+/* ============================================================
+   7. MEDIA QUERIES (MÓVIL Y TABLET VERTICAL)
+   ============================================================ */
+.mobile-only { display: none !important; } /* Oculto en PC */
 
-.document-name { font-weight: 600; font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.document-meta { font-size: 0.75rem; color: var(--text-light); }
-
-.empty-docs { padding: 20px; color: var(--text-light); text-align: center; font-style: italic; }
-
-/* ========================================
-   9. UTILIDADES RESPONSIVE
-   ======================================== */
-.mobile-only { display: none !important; }
-.desktop-only { display: block !important; }
-
-/* ========================================
-   10. MÓVIL Y TABLET (Media Query)
-   ======================================== */
-@media (max-width: 900px) {
-    
-    .mobile-only { display: flex !important; }
+/* Activamos modo móvil si es menos de 1024px (iPad Pro vertical o horizontal pequeña) */
+@media (max-width: 1024px) {
     .desktop-only { display: none !important; }
+    .mobile-only { display: flex !important; }
 
-    .app-header { padding: 0 10px; height: 50px; }
-    .logo h1 { display: none; }
-    
+    /* Header compacto */
+    .app-header { padding: 0 10px; }
+    .logo span, .logo h1 { display: none; }
+
+    /* Reorganizar Layout */
     .main-content {
         flex-direction: column;
-        height: calc(100vh - 50px);
+        height: calc(100dvh - var(--header-h));
     }
 
-    /* --- BARRA DE HERRAMIENTAS INFERIOR SCROLLABLE --- */
+    /* BARRA DE HERRAMIENTAS INFERIOR (SCROLLABLE) */
     .toolbar {
-        position: fixed;
-        bottom: 0; left: 0; right: 0;
+        order: 2; /* Poner al final (abajo) */
         width: 100%;
-        height: 80px; /* Un poco más alta para que quepa todo */
-        flex-direction: row;
+        height: var(--toolbar-h);
+        flex-direction: row; /* Horizontal */
+        padding: 5px 10px;
         border-right: none;
-        border-top: 2px solid var(--border);
-        padding: 5px 15px;
+        border-top: 1px solid var(--border);
         align-items: center;
-        justify-content: flex-start; /* Alinear al principio para el scroll */
-        gap: 20px;
+        gap: 15px;
         
-        /* HABILITAR SCROLL HORIZONTAL */
+        /* Permitir scroll horizontal para ver colores/grosor */
         overflow-x: auto; 
         overflow-y: hidden;
         white-space: nowrap;
         -webkit-overflow-scrolling: touch;
     }
 
+    /* Ajustar grupos para línea horizontal */
     .tool-group { 
-        margin: 0; 
-        display: flex; 
-        align-items: center; 
-        border-bottom: none;
-        padding: 0;
+        display: flex; align-items: center; gap: 10px; margin: 0; padding-right: 15px; border-right: 1px solid #eee;
     }
+    .tool-group:last-child { border: none; }
     
-    /* Mostrar Colores y Grosor en Móvil */
-    .color-palette { 
-        display: flex; 
-        flex-wrap: nowrap; /* No saltar de línea */
-        gap: 8px;
-    }
-    
-    /* El slider ocupa un ancho fijo */
-    input[type=range] { width: 100px !important; }
-
     .tool-buttons { flex-direction: row; gap: 10px; }
     
+    /* Botones más grandes para dedos */
     .tool-btn {
-        width: 45px; height: 45px;
-        border-radius: 50%;
-        padding: 0;
-        justify-content: center;
+        flex-shrink: 0; width: 44px; height: 44px; padding: 0; justify-content: center; border-radius: 50%;
     }
-    .tool-btn:hover { transform: none; } /* Quitar efecto hover en tactil */
-    .tool-btn span { display: none; }
     .tool-btn i { font-size: 1.2rem; }
     
-    /* Ocultar Chat en barra (ya tiene botón) */
-    .chatbot-section { display: none; }
+    /* Colores y Slider VISIBLES en scroll horizontal */
+    .color-palette { flex-wrap: nowrap; gap: 8px; }
+    .color-btn { width: 32px; height: 32px; }
+    #brushSize { width: 100px; flex-shrink: 0; }
 
-    /* --- ÁREA CENTRAL --- */
+    /* Ocultar Chatbot de la barra (usar botón flotante) */
+    .toolbar .chatbot-section { display: none; }
+
+    /* ÁREA DOCUMENTO */
     .document-area {
-        /* Restar header y barra inferior */
-        height: calc(100vh - 50px - 80px); 
-        width: 100%;
+        order: 1; /* Arriba */
+        height: calc(100% - var(--toolbar-h)); /* Restar barra inferior */
     }
     .document-container { padding: 10px; }
-    
-    /* Ajuste del papel al móvil */
-    .text-content { 
-        min-width: 100%; 
-        width: 100%;
-        padding: 10px; 
-        min-height: auto; 
-    }
+    .text-content { width: 100%; padding: 10px; }
 
-    /* PANELES DESLIZANTES */
-    .documents-panel {
-        position: fixed; top: 0; right: 0; bottom: 0; width: 85%; max-width: 300px;
-        transform: translateX(100%); 
+    /* PANELES LATERALES (MODALES) */
+    .documents-panel, #chatbotModal {
+        position: fixed; top: 0; right: 0; bottom: 0;
+        width: 85%; max-width: 320px;
+        background: white; z-index: 100;
         box-shadow: -5px 0 20px rgba(0,0,0,0.2);
+        transform: translateX(100%); /* Oculto */
     }
-    .documents-panel.open { transform: translateX(0); }
+    .documents-panel.open, #chatbotModal.open { transform: translateX(0); }
 
-    .mobile-docs-header {
-        padding-bottom: 15px; border-bottom: 1px solid var(--border); margin-bottom: 15px;
-        display: flex; justify-content: space-between; align-items: center;
+    /* Estilo específico para Chatbot Modal */
+    #chatbotModal {
+        display: flex; flex-direction: column; padding: 15px;
     }
-    .mobile-docs-header h3 { font-size: 1.2rem; color: var(--primary); margin: 0; }
-    .mobile-docs-header button { border: none; background: none; font-size: 1.5rem; color: #999; }
-
-    /* CHATBOT FLOTANTE */
-    #chatbotSection {
-        display: none; position: fixed; bottom: 80px; left: 0; right: 0;
-        height: 60vh; background: white; border-top: 4px solid var(--primary);
-        z-index: 200; padding: 15px; box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
-        border-radius: 20px 20px 0 0;
-    }
-    #chatbotSection.open { display: flex; }
-
-    .mobile-chat-header {
-        display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
-    }
-    .mobile-chat-header h3 { font-size: 1.2rem; font-weight: bold; color: var(--primary); margin: 0; }
-    .mobile-chat-header button { border: none; background: none; font-size: 1.5rem; }
+    .chatbot-messages { flex: 1; }
 }
 
-/* BOTÓN FLOTANTE */
-.mobile-fab {
-    display: none; position: fixed; bottom: 100px; right: 20px;
-    width: 55px; height: 55px; border-radius: 50%;
-    background: var(--primary); color: white; border: none;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 90;
-    cursor: pointer; font-size: 1.4rem;
-    align-items: center; justify-content: center;
+/* BOTONES FLOTANTES MÓVIL */
+.fab-container {
+    position: fixed; bottom: 85px; right: 15px; 
+    display: flex; flex-direction: column; gap: 10px; z-index: 90;
 }
-
-@media (max-width: 900px) { .mobile-fab { display: flex; } }
+.fab {
+    width: 50px; height: 50px; border-radius: 50%; border: none;
+    background: var(--primary); color: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; cursor: pointer;
+}
