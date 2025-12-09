@@ -1,0 +1,758 @@
+/* ========================================
+   ANOTADOR INTELIGENTE - STYLES.CSS
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+:root {
+    --primary: #4361ee;
+    --secondary: #3a0ca3;
+    --success: #4CAF50;
+    --danger: #f44336;
+    --warning: #ff9800;
+    --bg-light: #f5f7fb;
+    --bg-dark: #525659;
+    --border: #dee2e6;
+    --text-dark: #333;
+    --text-light: #666;
+    --sidebar-left-width: 280px;
+    --sidebar-right-width: 280px;
+    --header-height: 60px;
+}
+
+body {
+    background-color: var(--bg-light);
+    height: 100vh;
+    overflow: hidden;
+    touch-action: pan-y pinch-zoom;
+}
+
+/* ========================================
+   APP CONTAINER
+   ======================================== */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+.app-header {
+    height: var(--header-height);
+    background: white;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--border);
+    flex-shrink: 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    z-index: 100;
+}
+
+.logo {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.logo i {
+    font-size: 1.6rem;
+}
+
+.user-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* ========================================
+   MAIN CONTENT LAYOUT
+   ======================================== */
+.main-content {
+    display: flex;
+    height: calc(100vh - var(--header-height));
+    overflow: hidden;
+    width: 100%;
+}
+
+/* ========================================
+   TOOLBAR (IZQUIERDA)
+   ======================================== */
+.toolbar {
+    width: var(--sidebar-left-width);
+    background: white;
+    border-right: 2px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 15px;
+    overflow-y: auto;
+    flex-shrink: 0;
+    gap: 20px;
+}
+
+.tool-group {
+    margin-bottom: 15px;
+}
+
+.tool-group h4 {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tool-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tool-btn {
+    padding: 10px 15px;
+    border: 2px solid var(--border);
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    transition: all 0.2s ease;
+    font-weight: 500;
+    justify-content: flex-start;
+    min-height: 42px;
+}
+
+.tool-btn:hover {
+    background: #f8f9fa;
+    border-color: var(--primary);
+    transform: translateX(2px);
+}
+
+.tool-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+}
+
+.tool-btn i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.tool-btn span {
+    flex: 1;
+}
+
+/* ========================================
+   COLORES
+   ======================================== */
+.color-palette {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.color-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.color-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+.color-btn.active {
+    border-color: #333;
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.color-btn.active::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* ========================================
+   CHATBOT (EN TOOLBAR)
+   ======================================== */
+.chatbot-section {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 2px solid var(--border);
+}
+
+.chatbot-section h3 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary);
+}
+
+.chatbot-messages {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.message {
+    padding: 8px 12px;
+    border-radius: 8px;
+    max-width: 90%;
+    word-wrap: break-word;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.message.user {
+    background: var(--primary);
+    color: white;
+    align-self: flex-end;
+    margin-left: auto;
+}
+
+.message.bot {
+    background: white;
+    color: var(--text-dark);
+    align-self: flex-start;
+    border: 1px solid var(--border);
+}
+
+.message.typing {
+    font-style: italic;
+    color: var(--text-light);
+}
+
+.chatbot-input {
+    display: flex;
+    gap: 8px;
+}
+
+.chatbot-input input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+}
+
+.chatbot-input input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.chatbot-input button {
+    min-width: 40px;
+    padding: 8px;
+}
+
+#clearChatBtn {
+    margin-top: 8px;
+    font-size: 0.8rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--text-light);
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+#clearChatBtn:hover {
+    background: #f0f0f0;
+    color: var(--danger);
+}
+
+/* ========================================
+   PANEL DERECHO (DOCUMENTOS)
+   ======================================== */
+.documents-panel {
+    width: var(--sidebar-right-width);
+    background: white;
+    border-left: 2px solid var(--border);
+    padding: 20px;
+    overflow-y: auto;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.documents-panel h3 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+#documentsList {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.document-item {
+    padding: 12px;
+    background: #f8f9fa;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.document-item:hover {
+    background: #e9ecef;
+    border-color: var(--primary);
+    transform: translateX(3px);
+}
+
+.document-item.active {
+    border-color: var(--primary);
+    background: #eef4ff;
+    box-shadow: 0 2px 8px rgba(67, 97, 238, 0.2);
+}
+
+.doc-info {
+    flex: 1;
+    overflow: hidden;
+}
+
+.document-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-dark);
+    margin-bottom: 4px;
+}
+
+.document-meta {
+    font-size: 0.75rem;
+    color: var(--text-light);
+}
+
+.document-item button {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    min-height: auto;
+}
+
+.empty-docs {
+    padding: 20px;
+    color: var(--text-light);
+    text-align: center;
+    font-style: italic;
+}
+
+/* ========================================
+   ÁREA DE DOCUMENTO (CENTRO)
+   ======================================== */
+.document-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-dark);
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.document-header {
+    background: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--border);
+    height: 50px;
+    flex-shrink: 0;
+    z-index: 10;
+}
+
+.document-header h3 {
+    font-size: 1rem;
+    color: var(--text-dark);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 50%;
+}
+
+.document-header > div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#pageInfo {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    font-weight: 500;
+    min-width: 60px;
+    text-align: center;
+}
+
+/* ========================================
+   CONTENEDOR DE DOCUMENTO
+   ======================================== */
+.document-container {
+    flex: 1;
+    overflow: auto;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+    cursor: default;
+    -webkit-overflow-scrolling: touch;
+}
+
+.document-container.drag-over {
+    background: #3a4348 !important;
+}
+
+.document-container.drag-over .upload-prompt {
+    color: white !important;
+    transform: scale(1.1);
+}
+
+/* ========================================
+   UPLOAD PROMPT
+   ======================================== */
+.upload-prompt {
+    text-align: center;
+    padding: 60px 20px;
+    color: #ccc;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    user-select: none;
+}
+
+.upload-prompt:hover {
+    color: white;
+    transform: scale(1.05);
+}
+
+.upload-prompt i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.upload-prompt p:first-of-type {
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.upload-prompt p:last-of-type {
+    font-size: 0.9rem;
+    color: #999;
+}
+
+/* ========================================
+   DOCUMENT VIEWER
+   ======================================== */
+.document-viewer {
+    position: relative;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.text-content {
+    background: white;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+    width: 100%;
+    min-height: 800px;
+    padding: 60px;
+    border-radius: 4px;
+}
+
+.text-content img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+}
+
+#annotationCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    touch-action: none;
+    cursor: crosshair;
+}
+
+/* ========================================
+   SCROLLBAR STYLING
+   ======================================== */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* ========================================
+   RESPONSIVE - TABLETS
+   ======================================== */
+@media (max-width: 1024px) {
+    :root {
+        --sidebar-left-width: 240px;
+        --sidebar-right-width: 240px;
+    }
+    
+    .text-content {
+        padding: 40px;
+        min-height: 600px;
+    }
+    
+    .tool-btn span {
+        font-size: 0.85rem;
+    }
+}
+
+/* ========================================
+   RESPONSIVE - MÓVILES
+   ======================================== */
+@media (max-width: 768px) {
+    :root {
+        --header-height: 56px;
+    }
+    
+    .app-header {
+        padding: 0 12px;
+    }
+    
+    .logo {
+        font-size: 1.1rem;
+    }
+    
+    .logo h1 {
+        display: none;
+    }
+    
+    .user-actions {
+        gap: 6px;
+    }
+    
+    /* Ocultar panel derecho en móvil */
+    .documents-panel {
+        display: none;
+    }
+    
+    /* Toolbar compacto */
+    .toolbar {
+        width: 70px;
+        padding: 10px 5px;
+        align-items: center;
+    }
+    
+    .toolbar h4,
+    .tool-btn span,
+    .chatbot-section {
+        display: none;
+    }
+    
+    .tool-btn {
+        width: 50px;
+        height: 50px;
+        justify-content: center;
+        padding: 0;
+        min-height: 50px;
+    }
+    
+    .tool-btn i {
+        font-size: 1.3rem;
+    }
+    
+    .color-palette {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .color-btn {
+        width: 45px;
+        height: 45px;
+    }
+    
+    #brushSize {
+        width: 100%;
+        margin: 5px 0;
+    }
+    
+    .document-container {
+        padding: 15px 10px;
+    }
+    
+    .text-content {
+        padding: 20px;
+        min-height: 500px;
+        width: 100%;
+    }
+    
+    .document-header {
+        padding: 8px 12px;
+    }
+    
+    .document-header h3 {
+        font-size: 0.9rem;
+        max-width: 40%;
+    }
+    
+    #pageInfo {
+        font-size: 0.85rem;
+        min-width: 50px;
+    }
+    
+    .upload-prompt {
+        padding: 40px 15px;
+    }
+    
+    .upload-prompt i {
+        font-size: 3rem;
+    }
+    
+    .upload-prompt p:first-of-type {
+        font-size: 1.1rem;
+    }
+}
+
+/* ========================================
+   RESPONSIVE - MÓVILES PEQUEÑOS
+   ======================================== */
+@media (max-width: 480px) {
+    .toolbar {
+        width: 60px;
+        padding: 8px 3px;
+    }
+    
+    .tool-btn {
+        width: 45px;
+        height: 45px;
+        min-height: 45px;
+    }
+    
+    .tool-btn i {
+        font-size: 1.1rem;
+    }
+    
+    .color-btn {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .text-content {
+        padding: 15px;
+        min-height: 400px;
+    }
+    
+    .document-header h3 {
+        font-size: 0.8rem;
+    }
+}
+
+/* ========================================
+   UTILIDADES
+   ======================================== */
+.hidden {
+    display: none !important;
+}
+
+.disabled {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+    pointer-events: none;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Para dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+    .tool-btn:hover {
+        transform: none;
+    }
+    
+    .document-item:hover {
+        transform: none;
+    }
+    
+    .color-btn:hover {
+        transform: scale(1);
+    }
+}

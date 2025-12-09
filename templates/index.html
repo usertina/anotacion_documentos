@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Anotador Inteligente</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">
+                <i class="fas fa-edit"></i>
+                <h1>Anotador</h1>
+            </div>
+            <div class="user-actions">
+                <input type="file" id="fileInput" accept=".pdf,.docx,.txt,.png,.jpg" hidden>
+                <button id="selectFileBtn" class="tool-btn active"><i class="fas fa-upload"></i> Subir</button>
+                <button id="saveBtn" class="tool-btn"><i class="fas fa-save"></i> Guardar</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <aside class="toolbar">
+                <div class="tool-group">
+                    <h4>Color</h4>
+                    <div class="color-palette">
+                        <div class="color-btn active" style="background:#FFEB3B" data-color="#FFEB3B"></div>
+                        <div class="color-btn" style="background:#F48FB1" data-color="#F48FB1"></div>
+                        <div class="color-btn" style="background:#4CAF50" data-color="#4CAF50"></div>
+                        <div class="color-btn" style="background:#2196F3" data-color="#2196F3"></div>
+                        <div class="color-btn" style="background:#000000" data-color="#000000"></div>
+                    </div>
+                </div>
+
+                <div class="tool-group">
+                    <h4>Herramienta</h4>
+                    <div class="tool-buttons">
+                        <button class="tool-btn active" data-tool="pen"><i class="fas fa-pen"></i> <span>Lápiz</span></button>
+                        <button class="tool-btn" data-tool="highlighter"><i class="fas fa-highlighter"></i> <span>Resaltar</span></button>
+                        <button class="tool-btn" data-tool="text"><i class="fas fa-font"></i> <span>Texto</span></button>
+                        <button class="tool-btn" data-tool="eraser"><i class="fas fa-eraser"></i> <span>Borrar</span></button>
+                    </div>
+                </div>
+
+                <div class="tool-group">
+                    <h4>Grosor: <span id="brushSizeValue">3px</span></h4>
+                    <input type="range" id="brushSize" min="1" max="20" value="3" style="width:100%">
+                </div>
+
+                <div class="tool-group">
+                    <button id="clearAllBtn" class="tool-btn" style="color:red; border-color:red"><i class="fas fa-trash"></i> <span>Limpiar Página</span></button>
+                </div>
+
+                <div class="chatbot-section">
+                    <h3><i class="fas fa-robot"></i> IA Chat</h3>
+                    <div class="chatbot-messages" id="chatbotMessages">
+                        <div class="message bot">Hola, sube un documento para empezar.</div>
+                    </div>
+                    <div class="chatbot-input">
+                        <input type="text" id="chatbotInput" placeholder="...">
+                        <button id="sendQuestionBtn" class="tool-btn"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                    <button id="clearChatBtn" style="margin-top:5px; font-size:0.8rem; border:none; background:none; cursor:pointer; color:#666">Borrar historial</button>
+                </div>
+            </aside>
+
+            <main class="document-area">
+                <div class="document-header">
+                    <h3 id="documentTitle">Sin documento</h3>
+                    <div>
+                        <button id="prevPage" class="tool-btn"><i class="fas fa-chevron-left"></i></button>
+                        <span id="pageInfo" style="margin:0 10px">0/0</span>
+                        <button id="nextPage" class="tool-btn"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+
+                <div class="document-container" id="documentContainer">
+                    <div id="uploadPrompt" class="upload-prompt" style="text-align:center; padding-top:50px;">
+                        <i class="fas fa-cloud-upload-alt" style="font-size:3rem; color:#ccc;"></i>
+                        <p>Sube un archivo para comenzar</p>
+                        <p style="font-size:0.8rem; color:#888">(Click o Arrastrar)</p>
+                    </div>
+                    
+                    <div class="document-viewer" id="documentViewer" style="display:none;">
+                        <div class="text-content" id="textContent">
+                            </div>
+                        <canvas id="annotationCanvas"></canvas>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="documents-panel" id="rightPanel">
+                <div style="margin-bottom: 20px; border-bottom: 1px solid #dee2e6; padding-bottom: 10px;">
+                    <h3><i class="fas fa-folder"></i> Guardados</h3>
+                    <div id="documentsList" style="max-height: 300px; overflow-y: auto;">
+                        <div class="empty-docs" style="padding:10px; color:#999; text-align:center;">Cargando...</div>
+                    </div>
+                </div>
+
+                <div id="annotationsPanel" style="display:none">
+                    <h3><i class="fas fa-comment"></i> Anotaciones</h3>
+                    <div id="annotationsList"></div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

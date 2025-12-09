@@ -1,0 +1,24 @@
+# Usar una imagen ligera de Python
+FROM python:3.9-slim
+
+# 1. Instalar Poppler (necesario para pdf2image)
+RUN apt-get update && apt-get install -y \
+    poppler-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# 2. Configurar directorio de trabajo
+WORKDIR /app
+
+# 3. Copiar los archivos de requisitos e instalarlos
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 4. Copiar el resto del código
+COPY . .
+
+# 5. Crear carpetas necesarias si no existen
+RUN mkdir -p uploads annotated_docs
+
+# 6. Comando para iniciar la app (usando Gunicorn)
+# Render usa el puerto 10000 por defecto dentro de Docker
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:10000", "--timeout", "120"]
