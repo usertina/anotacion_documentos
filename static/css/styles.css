@@ -1,5 +1,5 @@
 /* ========================================
-   ANOTADOR INTELIGENTE - ESTILOS COMPLETOS
+   ANOTADOR INTELIGENTE - STYLES.CSS
    ======================================== */
 
 /* --- 1. RESET Y VARIABLES --- */
@@ -34,8 +34,8 @@ body {
     background-color: var(--bg-light);
     height: 100vh;
     width: 100vw;
-    overflow: hidden; /* Evita scroll en la página entera */
-    touch-action: none; /* Mejora el dibujo en táctil */
+    overflow: hidden; 
+    /* QUITADO: touch-action: none; -> Esto bloqueaba el scroll en iPad */
 }
 
 /* --- 2. CONTENEDOR PRINCIPAL --- */
@@ -81,7 +81,7 @@ body {
     display: flex;
     height: calc(100vh - var(--header-height));
     width: 100%;
-    position: relative; /* Necesario para posicionar paneles móviles */
+    position: relative; 
 }
 
 /* ========================================
@@ -118,7 +118,7 @@ body {
     gap: 8px;
 }
 
-/* Estilos de Botones (Tus originales) */
+/* Estilos de Botones */
 .tool-btn {
     padding: 10px 15px;
     border: 2px solid var(--border);
@@ -134,6 +134,7 @@ body {
     font-weight: 500;
     justify-content: flex-start;
     min-height: 42px;
+    flex-shrink: 0; /* Evita que se aplasten en móvil */
 }
 
 .tool-btn:hover {
@@ -169,6 +170,7 @@ body {
     border: 3px solid transparent;
     cursor: pointer;
     transition: all 0.2s ease;
+    flex-shrink: 0; /* Evita que se aplasten */
 }
 
 .color-btn:hover { transform: scale(1.1); box-shadow: 0 3px 10px rgba(0,0,0,0.2); }
@@ -274,17 +276,18 @@ body {
     max-width: 300px;
 }
 
-/* Canvas Container */
+/* Canvas Container (AQUÍ ESTÁ LA CLAVE DEL SCROLL) */
 .document-container {
     flex: 1;
-    overflow: auto;
+    overflow-y: auto; /* Permitir scroll vertical */
+    overflow-x: auto;
     position: relative;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     padding: 40px 20px;
-    cursor: default;
-    -webkit-overflow-scrolling: touch;
+    /* Mejora el scroll en iOS */
+    -webkit-overflow-scrolling: touch; 
 }
 
 .document-container.drag-over { background: #3a4348 !important; }
@@ -305,7 +308,8 @@ body {
 #annotationCanvas {
     position: absolute; top: 0; left: 0;
     z-index: 10;
-    touch-action: none;
+    /* Solo el canvas bloquea gestos para dibujar, el resto permite scroll */
+    touch-action: none; 
     cursor: crosshair;
 }
 
@@ -343,7 +347,7 @@ body {
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
-    flex-direction: column; /* Cambiado para acomodar botones abajo */
+    flex-direction: column;
     gap: 8px;
 }
 
@@ -358,134 +362,134 @@ body {
 /* ========================================
    9. UTILIDADES RESPONSIVE
    ======================================== */
-.mobile-only { display: none !important; } /* Oculto en PC */
-.desktop-only { display: block !important; } /* Visible en PC */
+.mobile-only { display: none !important; }
+.desktop-only { display: block !important; }
 
 /* ========================================
    10. MÓVIL Y TABLET (Media Query)
    ======================================== */
 @media (max-width: 900px) {
     
-    /* Mostrar elementos móviles */
     .mobile-only { display: flex !important; }
     .desktop-only { display: none !important; }
 
-    /* --- HEADER MÁS PEQUEÑO --- */
     .app-header { padding: 0 10px; height: 50px; }
     .logo h1 { display: none; }
     
-    /* --- LAYOUT VERTICAL --- */
     .main-content {
         flex-direction: column;
-        height: calc(100vh - 50px); /* Restar header */
+        height: calc(100vh - 50px);
     }
 
-    /* --- BARRA DE HERRAMIENTAS INFERIOR --- */
+    /* --- BARRA DE HERRAMIENTAS INFERIOR SCROLLABLE --- */
     .toolbar {
         position: fixed;
         bottom: 0; left: 0; right: 0;
         width: 100%;
-        height: var(--mobile-nav-height);
-        flex-direction: row; /* Horizontal */
+        height: 80px; /* Un poco más alta para que quepa todo */
+        flex-direction: row;
         border-right: none;
         border-top: 2px solid var(--border);
         padding: 5px 15px;
         align-items: center;
-        justify-content: space-between;
-        overflow-x: auto; /* Scroll si no caben botones */
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        justify-content: flex-start; /* Alinear al principio para el scroll */
+        gap: 20px;
+        
+        /* HABILITAR SCROLL HORIZONTAL */
+        overflow-x: auto; 
+        overflow-y: hidden;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
     }
 
-    .tool-group { margin: 0; display: flex; align-items: center; }
+    .tool-group { 
+        margin: 0; 
+        display: flex; 
+        align-items: center; 
+        border-bottom: none;
+        padding: 0;
+    }
     
-    /* Botones más grandes y redondos para el dedo */
-    .tool-buttons { flex-direction: row; gap: 15px; }
+    /* Mostrar Colores y Grosor en Móvil */
+    .color-palette { 
+        display: flex; 
+        flex-wrap: nowrap; /* No saltar de línea */
+        gap: 8px;
+    }
+    
+    /* El slider ocupa un ancho fijo */
+    input[type=range] { width: 100px !important; }
+
+    .tool-buttons { flex-direction: row; gap: 10px; }
+    
     .tool-btn {
         width: 45px; height: 45px;
         border-radius: 50%;
         padding: 0;
         justify-content: center;
     }
+    .tool-btn:hover { transform: none; } /* Quitar efecto hover en tactil */
+    .tool-btn span { display: none; }
     .tool-btn i { font-size: 1.2rem; }
     
-    /* Ocultar secciones que molestan en la barra inferior */
-    .color-palette { display: none; } /* Ocultamos colores para simplificar */
-    .chatbot-section { display: none; } /* El chat ahora es flotante */
+    /* Ocultar Chat en barra (ya tiene botón) */
+    .chatbot-section { display: none; }
 
     /* --- ÁREA CENTRAL --- */
     .document-area {
-        height: calc(100% - var(--mobile-nav-height));
+        /* Restar header y barra inferior */
+        height: calc(100vh - 50px - 80px); 
         width: 100%;
     }
     .document-container { padding: 10px; }
+    
+    /* Ajuste del papel al móvil */
     .text-content { 
         min-width: 100%; 
+        width: 100%;
         padding: 10px; 
         min-height: auto; 
     }
 
-    /* --- PANEL DERECHO (ARCHIVOS) -> CAJÓN DESLIZANTE --- */
+    /* PANELES DESLIZANTES */
     .documents-panel {
-        position: fixed;
-        top: 0; right: 0; bottom: 0;
-        width: 85%; max-width: 320px;
-        transform: translateX(100%); /* Oculto a la derecha */
+        position: fixed; top: 0; right: 0; bottom: 0; width: 85%; max-width: 300px;
+        transform: translateX(100%); 
         box-shadow: -5px 0 20px rgba(0,0,0,0.2);
     }
-    .documents-panel.open { transform: translateX(0); } /* Clase para abrir */
+    .documents-panel.open { transform: translateX(0); }
 
-    /* Header del menú móvil de archivos */
     .mobile-docs-header {
-        padding-bottom: 15px;
-        border-bottom: 1px solid var(--border);
-        margin-bottom: 15px;
+        padding-bottom: 15px; border-bottom: 1px solid var(--border); margin-bottom: 15px;
         display: flex; justify-content: space-between; align-items: center;
     }
-    .mobile-docs-header h3 { font-size: 1.2rem; color: var(--primary); }
+    .mobile-docs-header h3 { font-size: 1.2rem; color: var(--primary); margin: 0; }
     .mobile-docs-header button { border: none; background: none; font-size: 1.5rem; color: #999; }
 
-    /* --- CHATBOT -> CAJÓN DESLIZANTE DESDE ABAJO --- */
+    /* CHATBOT FLOTANTE */
     #chatbotSection {
-        display: none; /* Oculto por defecto */
-        position: fixed;
-        bottom: var(--mobile-nav-height); /* Justo encima de la barra */
-        left: 0; right: 0;
-        height: 60vh; /* Ocupa 60% de la pantalla */
-        background: white;
-        border-top: 4px solid var(--primary);
-        z-index: 200;
-        padding: 15px;
-        box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+        display: none; position: fixed; bottom: 80px; left: 0; right: 0;
+        height: 60vh; background: white; border-top: 4px solid var(--primary);
+        z-index: 200; padding: 15px; box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
         border-radius: 20px 20px 0 0;
     }
     #chatbotSection.open { display: flex; }
 
     .mobile-chat-header {
-        display: flex; justify-content: space-between; align-items: center;
-        margin-bottom: 10px;
+        display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
     }
-    .mobile-chat-header h3 { font-size: 1.2rem; font-weight: bold; color: var(--primary); }
+    .mobile-chat-header h3 { font-size: 1.2rem; font-weight: bold; color: var(--primary); margin: 0; }
     .mobile-chat-header button { border: none; background: none; font-size: 1.5rem; }
 }
 
-/* --- BOTÓN FLOTANTE (ARCHIVOS) --- */
+/* BOTÓN FLOTANTE */
 .mobile-fab {
-    display: none; /* Oculto en PC */
-    position: fixed;
-    bottom: 90px; /* Encima de la barra inferior */
-    right: 20px;
-    width: 55px; height: 55px;
-    border-radius: 50%;
-    background: var(--primary);
-    color: white;
-    border: none;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    z-index: 90;
-    cursor: pointer;
-    font-size: 1.4rem;
+    display: none; position: fixed; bottom: 100px; right: 20px;
+    width: 55px; height: 55px; border-radius: 50%;
+    background: var(--primary); color: white; border: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 90;
+    cursor: pointer; font-size: 1.4rem;
     align-items: center; justify-content: center;
 }
 
-@media (max-width: 900px) {
-    .mobile-fab { display: flex; }
-}
+@media (max-width: 900px) { .mobile-fab { display: flex; } }
