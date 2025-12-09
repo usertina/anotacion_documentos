@@ -1,171 +1,113 @@
 /* ============================================================
-   ANOTADOR UNIVERSAL - DISEÑO PROFESIONAL RESPONSIVE
-   Optimizado para: Desktop, Tablet (Portrait/Landscape), Mobile
+   HOTFIX MÓVIL - ANOTADOR UNIVERSAL
+   Solución para pantallas borrosas y problemas de scroll
    ============================================================ */
 
-/* --- 1. CONFIGURACIÓN BASE Y VARIABLES --- */
+/* --- RESET ABSOLUTO PARA MÓVIL --- */
 * {
-    margin: 0; 
-    padding: 0; 
-    box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
     -webkit-tap-highlight-color: transparent;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
-:root {
-    /* Colores principales */
-    --primary: #4361ee;
-    --primary-dark: #3451d1;
-    --primary-light: #6c8aff;
-    --secondary: #7209b7;
-    --accent: #f72585;
-    
-    /* Fondos con glassmorphism */
-    --bg-light: #f8f9fb;
-    --bg-white: #ffffff;
-    --bg-dark: #2b2d30;
-    --bg-document: #3d4147;
-    --glass-bg: rgba(255, 255, 255, 0.85);
-    --glass-border: rgba(255, 255, 255, 0.18);
-    
-    /* Texto */
-    --text-primary: #1f2937;
-    --text-secondary: #6b7280;
-    --text-muted: #9ca3af;
-    
-    /* Bordes y sombras */
-    --border: #e1e4e8;
-    --border-dark: #d0d7de;
-    --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
-    --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
-    --shadow-lg: 0 8px 32px rgba(0,0,0,0.16);
-    --shadow-xl: 0 12px 48px rgba(0,0,0,0.2);
-    
-    /* Dimensiones base (Desktop) */
-    --sidebar-w: 320px;
-    --header-h: 68px;
-    --toolbar-h: 80px;
-    --border-radius: 12px;
-    --border-radius-sm: 8px;
-    
-    /* Transiciones */
-    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
-    
-    /* Z-index */
-    --z-base: 1;
-    --z-canvas: 10;
-    --z-toolbar: 90;
-    --z-panel: 95;
-    --z-header: 100;
-    --z-modal: 110;
-    --z-fab: 85;
+/* --- VIEWPORT FORZADO --- */
+html {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    position: fixed;
+    -webkit-text-size-adjust: 100%;
 }
 
 body {
-    background: var(--bg-light);
-    height: 100dvh;
     width: 100vw;
+    height: 100vh;
     overflow: hidden;
-    color: var(--text-primary);
-    
-    /* Safe areas para iOS */
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
+    background: #f8f9fb;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    position: fixed;
+    top: 0;
+    left: 0;
 }
 
-/* --- 2. CONTENEDOR PRINCIPAL --- */
+/* --- VARIABLES SIMPLIFICADAS --- */
+:root {
+    --primary: #4361ee;
+    --bg-white: #ffffff;
+    --bg-light: #f8f9fb;
+    --bg-dark: #3d4147;
+    --border: #e1e4e8;
+    --text: #1f2937;
+    --shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* --- CONTENEDOR PRINCIPAL --- */
 .app-container {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    width: 100%;
-    max-height: 100dvh;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: hidden;
 }
 
-/* --- 3. HEADER MEJORADO --- */
+/* --- HEADER MÓVIL --- */
 .app-header {
-    height: var(--header-h);
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-bottom: 1px solid var(--glass-border);
-    padding: 0 24px;
+    height: 56px;
+    min-height: 56px;
+    background: var(--bg-white);
+    border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0 12px !important;
     flex-shrink: 0;
-    z-index: var(--z-header);
-    box-shadow: var(--shadow-sm);
-    position: sticky;
-    top: 0;
+    z-index: 100;
+    width: 100%;
 }
 
 .logo {
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-size: 1.25rem;
+    gap: 8px;
+    font-size: 1rem;
     font-weight: 700;
     color: var(--primary);
-    letter-spacing: -0.02em;
+}
+
+.logo h1,
+.logo span {
+    display: none !important;
 }
 
 .logo i {
-    font-size: 1.5rem;
-    color: var(--primary);
-    transition: transform var(--transition-base);
+    font-size: 1.4rem;
 }
 
-.logo:hover i {
-    transform: rotate(-5deg) scale(1.1);
-}
-
-.logo h1 {
-    font-size: 1.25rem;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-/* Botones del Header */
 .user-actions {
     display: flex;
-    gap: 12px;
-    align-items: center;
+    gap: 8px;
 }
 
 .header-btn {
-    padding: 10px 20px;
+    padding: 8px 12px !important;
     background: var(--primary);
     color: white;
     border: none;
-    border-radius: var(--border-radius-sm);
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    min-height: 44px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    transition: all var(--transition-base);
-    box-shadow: var(--shadow-sm);
-    min-height: 44px;
+    gap: 6px;
 }
 
-.header-btn:hover {
-    background: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.header-btn:active {
-    transform: translateY(0);
+.header-btn span {
+    display: none !important;
 }
 
 .header-btn.secondary {
@@ -174,961 +116,342 @@ body {
     border: 2px solid var(--primary);
 }
 
-.header-btn.secondary:hover {
-    background: var(--primary-light);
-    color: white;
-    border-color: var(--primary-light);
-}
-
-/* --- 4. LAYOUT PRINCIPAL --- */
+/* --- MAIN CONTENT --- */
 .main-content {
     display: flex;
-    height: calc(100dvh - var(--header-h));
+    flex-direction: column;
+    flex: 1;
     width: 100%;
-    position: relative;
+    height: calc(100vh - 56px - 72px);
     overflow: hidden;
+    position: relative;
 }
 
-/* --- 5. BARRA DE HERRAMIENTAS (DESKTOP) --- */
+/* --- OCULTAR SIDEBARS EN MÓVIL --- */
 .toolbar {
-    width: var(--sidebar-w);
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-right: 1px solid var(--glass-border);
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
-    gap: 24px;
-    z-index: var(--z-toolbar);
-    overflow-y: auto;
-    overflow-x: hidden;
-    box-shadow: var(--shadow-sm);
-    
-    /* Scrollbar personalizado */
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary-light) transparent;
+    display: none !important;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 72px;
+    background: var(--bg-white);
+    border-top: 1px solid var(--border);
+    z-index: 90;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px 12px !important;
+    width: 100%;
 }
 
-.toolbar::-webkit-scrollbar {
-    width: 6px;
-}
-
-.toolbar::-webkit-scrollbar-thumb {
-    background: var(--primary-light);
-    border-radius: 10px;
-}
-
-.toolbar::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-/* Grupos de herramientas */
-.tool-group {
-    display: flex;
-    flex-direction: column;
+.toolbar {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
     gap: 12px;
+}
+
+.tool-group {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 8px;
+    padding-right: 12px !important;
+    border-right: 1px solid var(--border);
+    margin: 0 !important;
+}
+
+.tool-group:last-child {
+    border: none;
 }
 
 .tool-group h4 {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-weight: 700;
-    margin-bottom: 4px;
+    display: none !important;
 }
 
 .tool-buttons {
-    display: flex;
-    flex-direction: column;
+    display: flex !important;
+    flex-direction: row !important;
     gap: 8px;
 }
 
-/* Botones de herramientas mejorados */
 .tool-btn {
-    padding: 12px 16px;
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    padding: 0 !important;
     border: 2px solid var(--border);
     background: white;
-    border-radius: var(--border-radius-sm);
-    cursor: pointer;
-    display: flex;
+    border-radius: 50%;
+    display: flex !important;
     align-items: center;
-    gap: 12px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: var(--text-primary);
-    transition: all var(--transition-base);
-    min-height: 48px;
-    position: relative;
-    overflow: hidden;
-}
-
-.tool-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: var(--primary-light);
-    opacity: 0.1;
-    transform: translate(-50%, -50%);
-    transition: width var(--transition-base), height var(--transition-base);
-}
-
-.tool-btn:hover::before {
-    width: 200%;
-    height: 200%;
-}
-
-.tool-btn:hover {
-    border-color: var(--primary);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-sm);
-}
-
-.tool-btn:active {
-    transform: translateY(0) scale(0.98);
-}
-
-.tool-btn.active {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    border-color: var(--primary);
-    color: white;
-    font-weight: 600;
-    box-shadow: var(--shadow-md);
-}
-
-.tool-btn i {
-    font-size: 1.25rem;
-    width: 28px;
-    text-align: center;
-    z-index: 1;
-}
-
-/* Paleta de colores mejorada */
-.color-palette {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-}
-
-.color-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: 3px solid white;
-    box-shadow: var(--shadow-sm);
-    cursor: pointer;
-    transition: all var(--transition-base);
-    position: relative;
+    justify-content: center;
     flex-shrink: 0;
 }
 
-.color-btn::after {
-    content: '';
-    position: absolute;
-    inset: -6px;
-    border-radius: 50%;
-    border: 2px solid transparent;
-    transition: all var(--transition-base);
+.tool-btn span {
+    display: none !important;
 }
 
-.color-btn:hover {
-    transform: scale(1.1);
-    box-shadow: var(--shadow-md);
+.tool-btn i {
+    font-size: 1.2rem;
+}
+
+.tool-btn.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+.color-palette {
+    display: flex !important;
+    gap: 8px;
+    flex-wrap: nowrap;
+}
+
+.color-btn {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 0 1px var(--border);
+    flex-shrink: 0;
 }
 
 .color-btn.active {
-    transform: scale(1.15);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 0 0 3px var(--primary);
 }
 
-.color-btn.active::after {
-    border-color: var(--primary);
+#brushSize {
+    width: 100px;
+    min-width: 100px;
 }
 
-/* Slider mejorado */
-input[type="range"] {
-    width: 100%;
-    height: 6px;
-    border-radius: 10px;
-    background: linear-gradient(90deg, var(--bg-light) 0%, var(--primary) 100%);
-    outline: none;
-    transition: opacity var(--transition-base);
-    cursor: pointer;
-    -webkit-appearance: none;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--primary);
-    cursor: pointer;
-    box-shadow: var(--shadow-md);
-    transition: all var(--transition-base);
-}
-
-input[type="range"]::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
-    box-shadow: var(--shadow-lg);
-}
-
-input[type="range"]::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--primary);
-    cursor: pointer;
-    border: none;
-    box-shadow: var(--shadow-md);
-    transition: all var(--transition-base);
-}
-
-input[type="range"]::-moz-range-thumb:hover {
-    transform: scale(1.2);
-    box-shadow: var(--shadow-lg);
-}
-
-/* Sección de Chatbot (Desktop) */
 .chatbot-section {
-    margin-top: auto;
-    border-top: 2px solid var(--border);
-    padding-top: 20px;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 280px;
-    gap: 12px;
+    display: none !important;
 }
 
-.chatbot-section h3 {
-    font-size: 1rem;
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-}
-
-.chatbot-section h3 i {
-    color: var(--secondary);
-}
-
-.chatbot-messages {
-    flex: 1;
-    overflow-y: auto;
-    background: var(--bg-light);
-    padding: 12px;
-    border-radius: var(--border-radius-sm);
-    margin-bottom: 12px;
-    border: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary-light) transparent;
-}
-
-.chatbot-messages::-webkit-scrollbar {
-    width: 4px;
-}
-
-.chatbot-messages::-webkit-scrollbar-thumb {
-    background: var(--primary-light);
-    border-radius: 10px;
-}
-
-.message {
-    padding: 10px 14px;
-    border-radius: var(--border-radius-sm);
-    font-size: 0.9rem;
-    max-width: 85%;
-    word-wrap: break-word;
-    animation: messageSlide 0.3s ease-out;
-}
-
-@keyframes messageSlide {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.message.user {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    color: white;
-    align-self: flex-end;
-    border-bottom-right-radius: 4px;
-    box-shadow: var(--shadow-sm);
-}
-
-.message.bot {
-    background: white;
-    border: 1px solid var(--border);
-    align-self: flex-start;
-    border-bottom-left-radius: 4px;
-    box-shadow: var(--shadow-sm);
-}
-
-.message.typing {
-    background: white;
-    border: 1px solid var(--border);
-    padding: 10px 20px;
-}
-
-.chatbot-input {
-    display: flex;
-    gap: 8px;
-}
-
-.chatbot-input input {
-    flex: 1;
-    padding: 10px 14px;
-    border: 2px solid var(--border);
-    border-radius: var(--border-radius-sm);
-    font-size: 0.95rem;
-    transition: all var(--transition-base);
-    background: white;
-}
-
-.chatbot-input input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
-}
-
-.chatbot-input .tool-btn {
-    min-width: 48px;
-    justify-content: center;
-}
-
-/* --- 6. ÁREA DE DOCUMENTO (CENTRO) --- */
+/* --- ÁREA DOCUMENTO (CRÍTICO) --- */
 .document-area {
     flex: 1;
     display: flex;
     flex-direction: column;
-    background: var(--bg-document);
-    position: relative;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-dark);
     overflow: hidden;
-    min-width: 0;
+    position: relative;
 }
 
 .document-header {
-    height: 52px;
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-bottom: 1px solid var(--glass-border);
+    height: 48px;
+    min-height: 48px;
+    background: var(--bg-white);
+    border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 20px;
+    padding: 0 12px !important;
     flex-shrink: 0;
-    box-shadow: var(--shadow-sm);
+    width: 100%;
 }
 
 .doc-title {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    color: var(--text-primary);
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 300px;
+    white-space: nowrap;
+    max-width: 140px;
 }
 
-/* Contenedor scrollable del documento */
+/* --- CONTENEDOR SCROLLABLE (MUY IMPORTANTE) --- */
 .document-container {
     flex: 1;
-    overflow: auto;
+    width: 100%;
+    height: 100%;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    background: var(--bg-dark);
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 32px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary-light) transparent;
+    padding: 16px !important;
 }
 
+/* Forzar scroll */
 .document-container::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 4px;
+    height: 4px;
 }
 
 .document-container::-webkit-scrollbar-thumb {
-    background: var(--primary-light);
+    background: rgba(255,255,255,0.3);
     border-radius: 10px;
 }
 
-.document-container::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
+/* --- VISOR DOCUMENTO --- */
+#documentViewer {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    position: relative;
 }
 
-/* El "papel" del documento */
 .text-content {
     background: white;
-    box-shadow: var(--shadow-xl);
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 600px;
     position: relative;
-    width: 100%;
-    max-width: 1200px;
-    min-height: 900px;
-    border-radius: var(--border-radius-sm);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    border-radius: 8px;
     overflow: hidden;
-    transition: transform var(--transition-slow);
-}
-
-.text-content:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 16px 56px rgba(0,0,0,0.24);
 }
 
 .text-content img {
     display: block;
-    width: 100%;
-    height: auto;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100%;
     pointer-events: none;
 }
 
-/* Canvas de anotaciones */
+/* --- CANVAS CRÍTICO --- */
 #annotationCanvas {
     position: absolute;
     top: 0;
     left: 0;
-    z-index: var(--z-canvas);
+    z-index: 10;
     touch-action: none;
     cursor: crosshair;
+    width: 100% !important;
+    height: 100% !important;
 }
 
-/* Prompt de subida mejorado */
+/* --- UPLOAD PROMPT --- */
 .upload-prompt {
     text-align: center;
-    color: var(--text-muted);
-    margin-top: 15%;
-    cursor: pointer;
-    padding: 48px;
-    border: 3px dashed var(--border-dark);
-    border-radius: var(--border-radius);
-    background: rgba(255, 255, 255, 0.05);
-    transition: all var(--transition-base);
-}
-
-.upload-prompt:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: var(--primary);
-    color: var(--primary);
-    transform: scale(1.02);
+    color: #999;
+    padding: 48px 24px !important;
+    border: 3px dashed var(--border);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.05);
+    margin: 20% auto !important;
+    max-width: 90%;
 }
 
 .upload-prompt i {
-    font-size: 5rem;
+    font-size: 4rem;
     display: block;
-    margin-bottom: 20px;
+    margin-bottom: 16px !important;
     opacity: 0.6;
-    transition: all var(--transition-base);
 }
 
-.upload-prompt:hover i {
-    opacity: 1;
-    transform: scale(1.1);
-}
-
-.upload-prompt p {
-    font-size: 1.1rem;
-    font-weight: 500;
-}
-
-/* --- 7. PANEL DERECHO (DOCUMENTOS) --- */
+/* --- PANELES LATERALES COMO MODALES --- */
 .documents-panel {
-    width: var(--sidebar-w);
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-left: 1px solid var(--glass-border);
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
-    gap: 16px;
-    z-index: var(--z-panel);
-    transition: transform var(--transition-slow);
-    box-shadow: var(--shadow-sm);
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--primary-light) transparent;
-}
-
-.documents-panel::-webkit-scrollbar {
-    width: 6px;
-}
-
-.documents-panel::-webkit-scrollbar-thumb {
-    background: var(--primary-light);
-    border-radius: 10px;
-}
-
-.documents-panel h3 {
-    font-size: 1.1rem;
-    color: var(--text-primary);
-    font-weight: 700;
-}
-
-#documentsList {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.document-item {
-    padding: 14px;
-    border: 2px solid var(--border);
-    border-radius: var(--border-radius-sm);
-    cursor: pointer;
-    transition: all var(--transition-base);
-    background: white;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    position: relative;
-    overflow: hidden;
-}
-
-.document-item::before {
-    content: '';
-    position: absolute;
-    left: 0;
+    position: fixed;
     top: 0;
-    width: 4px;
-    height: 100%;
-    background: var(--primary);
-    transform: scaleY(0);
-    transition: transform var(--transition-base);
+    right: 0;
+    bottom: 0;
+    width: 90%;
+    max-width: 320px;
+    background: var(--bg-white);
+    z-index: 110;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    box-shadow: -5px 0 20px rgba(0,0,0,0.3);
+    padding: 20px !important;
+    overflow-y: auto;
 }
 
-.document-item:hover {
-    border-color: var(--primary);
-    box-shadow: var(--shadow-md);
-    transform: translateX(4px);
+.documents-panel.open {
+    transform: translateX(0);
 }
 
-.document-item:hover::before {
-    transform: scaleY(1);
-}
-
-.document-item.active {
-    border-color: var(--primary);
-    background: linear-gradient(135deg, rgba(67, 97, 238, 0.05) 0%, rgba(114, 9, 183, 0.05) 100%);
-    box-shadow: var(--shadow-md);
-}
-
-.document-item.active::before {
-    transform: scaleY(1);
-}
-
-.doc-info {
-    flex: 1;
-}
-
-.document-name {
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--text-primary);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    margin-bottom: 4px;
-}
-
-.document-meta {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-}
-
-.doc-actions {
+#chatbotModal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 90%;
+    max-width: 320px;
+    background: var(--bg-white);
+    z-index: 110;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    box-shadow: -5px 0 20px rgba(0,0,0,0.3);
+    padding: 20px !important;
     display: flex;
-    gap: 6px;
-    justify-content: flex-end;
-    flex-wrap: wrap;
+    flex-direction: column;
 }
 
-.action-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 6px;
-    font-size: 1.1rem;
-    border-radius: 6px;
-    transition: all var(--transition-fast);
-    color: var(--text-secondary);
+#chatbotModal.open {
+    transform: translateX(0);
 }
 
-.action-btn:hover {
-    background: var(--bg-light);
-    transform: scale(1.1);
-}
-
-.empty-docs {
-    padding: 32px 16px;
-    text-align: center;
-    color: var(--text-muted);
-    font-style: italic;
-}
-
-/* --- 8. ELEMENTOS MÓVILES (OCULTOS POR DEFECTO) --- */
-.mobile-only {
-    display: none !important;
-}
-
-.desktop-only {
-    display: inline-flex !important;
-}
-
-/* Botones flotantes (FAB) */
+/* --- FABs --- */
 .fab-container {
     position: fixed;
-    bottom: 100px;
-    right: 20px;
+    bottom: 88px;
+    right: 16px;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    z-index: var(--z-fab);
+    z-index: 85;
 }
 
 .fab {
     width: 56px;
     height: 56px;
+    min-width: 56px;
+    min-height: 56px;
     border-radius: 50%;
     border: none;
     background: var(--primary);
     color: white;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.4rem;
-    cursor: pointer;
-    transition: all var(--transition-base);
 }
 
-.fab:hover {
-    transform: scale(1.1);
-    box-shadow: var(--shadow-xl);
+/* --- OVERLAY --- */
+#modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 105;
+    display: none;
 }
 
-.fab:active {
-    transform: scale(0.95);
+/* --- UTILITIES --- */
+.desktop-only {
+    display: none !important;
 }
 
-/* ============================================================
-   MEDIA QUERIES - RESPONSIVE DESIGN
-   ============================================================ */
-
-/* --- TABLET LANDSCAPE (1024px - 1366px) --- */
-@media (max-width: 1366px) and (min-width: 1024px) and (orientation: landscape) {
-    :root {
-        --sidebar-w: 280px;
-        --header-h: 64px;
-    }
-    
-    .toolbar, .documents-panel {
-        padding: 20px;
-    }
-    
-    .text-content {
-        max-width: 900px;
-    }
+.mobile-only {
+    display: flex !important;
 }
 
-/* --- TABLET PORTRAIT & SMALL LAPTOPS (768px - 1024px) --- */
-@media (max-width: 1024px) and (min-width: 768px) {
-    :root {
-        --sidebar-w: 260px;
-        --header-h: 60px;
-    }
-    
-    .logo h1 {
-        font-size: 1.1rem;
-    }
-    
-    .header-btn {
-        padding: 8px 16px;
-        font-size: 0.9rem;
-    }
-    
-    .toolbar, .documents-panel {
-        width: var(--sidebar-w);
-        padding: 16px;
-    }
-    
-    .text-content {
-        max-width: 800px;
-    }
-    
-    .document-container {
-        padding: 20px;
-    }
-}
-
-/* --- TABLET PORTRAIT ESPECÍFICO (768px - 1024px en portrait) --- */
-@media (max-width: 1024px) and (min-width: 768px) and (orientation: portrait) {
-    /* En tablet portrait, mantenemos la barra lateral pero más compacta */
-    :root {
-        --sidebar-w: 240px;
-    }
-    
+/* --- LANDSCAPE MODE --- */
+@media (orientation: landscape) and (max-height: 500px) {
     .toolbar {
-        gap: 16px;
-    }
-    
-    .tool-group h4 {
-        font-size: 0.7rem;
+        height: 64px;
+        padding: 6px 10px !important;
     }
     
     .tool-btn {
-        padding: 10px 12px;
-        min-height: 44px;
-    }
-    
-    .chatbot-section {
-        min-height: 200px;
-    }
-}
-
-/* --- MÓVIL Y TABLET PEQUEÑO (<768px) --- */
-@media (max-width: 767px) {
-    .desktop-only {
-        display: none !important;
-    }
-    
-    .mobile-only {
-        display: flex !important;
-    }
-    
-    :root {
-        --header-h: 56px;
-        --toolbar-h: 72px;
-    }
-    
-    /* Header compacto */
-    .app-header {
-        padding: 0 12px;
-        height: var(--header-h);
-    }
-    
-    .logo {
-        gap: 8px;
-    }
-    
-    .logo i {
-        font-size: 1.3rem;
-    }
-    
-    .user-actions {
-        gap: 8px;
-    }
-    
-    .header-btn {
-        padding: 8px 12px;
-        min-height: 40px;
-        font-size: 0.85rem;
-    }
-    
-    .header-btn span {
-        display: none;
-    }
-    
-    /* Layout reorganizado */
-    .main-content {
-        flex-direction: column;
-        height: calc(100dvh - var(--header-h));
-    }
-    
-    /* BARRA DE HERRAMIENTAS INFERIOR */
-    .toolbar {
-        order: 2;
-        width: 100%;
-        height: var(--toolbar-h);
-        flex-direction: row;
-        padding: 8px 12px;
-        border-right: none;
-        border-top: 1px solid var(--glass-border);
-        align-items: center;
-        gap: 16px;
-        overflow-x: auto;
-        overflow-y: hidden;
-        white-space: nowrap;
-        -webkit-overflow-scrolling: touch;
-    }
-    
-    .toolbar::-webkit-scrollbar {
-        height: 4px;
-    }
-    
-    /* Grupos horizontales */
-    .tool-group {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 10px;
-        margin: 0;
-        padding-right: 16px;
-        border-right: 1px solid var(--border);
-    }
-    
-    .tool-group:last-child {
-        border: none;
-    }
-    
-    .tool-group h4 {
-        display: none;
-    }
-    
-    .tool-buttons {
-        flex-direction: row;
-        gap: 8px;
-    }
-    
-    /* Botones táctiles más grandes */
-    .tool-btn {
-        flex-shrink: 0;
-        width: 48px;
-        height: 48px;
-        padding: 0;
-        justify-content: center;
-        border-radius: 50%;
-        min-height: auto;
-    }
-    
-    .tool-btn span {
-        display: none;
-    }
-    
-    .tool-btn i {
-        font-size: 1.3rem;
-        width: auto;
-    }
-    
-    /* Colores horizontales */
-    .color-palette {
-        flex-wrap: nowrap;
-        gap: 8px;
-    }
-    
-    .color-btn {
-        width: 40px;
-        height: 40px;
-    }
-    
-    /* Slider compacto */
-    #brushSize {
-        width: 120px;
-        flex-shrink: 0;
-    }
-    
-    /* Ocultar chatbot de toolbar */
-    .toolbar .chatbot-section {
-        display: none;
-    }
-    
-    /* ÁREA DOCUMENTO */
-    .document-area {
-        order: 1;
-        height: calc(100% - var(--toolbar-h));
-    }
-    
-    .document-header {
-        height: 48px;
-        padding: 0 12px;
-    }
-    
-    .doc-title {
-        font-size: 0.85rem;
-        max-width: 150px;
-    }
-    
-    .document-container {
-        padding: 16px;
-    }
-    
-    .text-content {
-        width: 100%;
-        max-width: 100%;
-        min-height: 600px;
-    }
-    
-    /* PANELES COMO MODALES */
-    .documents-panel,
-    #chatbotModal {
-        position: fixed;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        width: 85%;
-        max-width: 340px;
-        background: var(--bg-white);
-        z-index: var(--z-modal);
-        box-shadow: var(--shadow-xl);
-        transform: translateX(100%);
-    }
-    
-    .documents-panel.open,
-    #chatbotModal.open {
-        transform: translateX(0);
-    }
-    
-    #chatbotModal {
-        display: flex;
-        flex-direction: column;
-        padding: 20px;
-    }
-    
-    .chatbot-messages {
-        flex: 1;
-        margin-bottom: 12px;
-    }
-    
-    /* FABs más pequeños */
-    .fab-container {
-        bottom: 90px;
-        right: 16px;
-        gap: 10px;
-    }
-    
-    .fab {
-        width: 52px;
-        height: 52px;
-        font-size: 1.3rem;
-    }
-}
-
-/* --- MÓVIL LANDSCAPE (<768px en horizontal) --- */
-@media (max-height: 500px) and (orientation: landscape) {
-    :root {
-        --toolbar-h: 60px;
-    }
-    
-    .toolbar {
-        height: var(--toolbar-h);
-        padding: 6px 10px;
-        gap: 12px;
-    }
-    
-    .tool-btn {
-        width: 44px;
-        height: 44px;
-    }
-    
-    .tool-btn i {
-        font-size: 1.2rem;
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
     }
     
     .color-btn {
@@ -1136,61 +459,19 @@ input[type="range"]::-moz-range-thumb:hover {
         height: 36px;
     }
     
-    .fab-container {
-        bottom: 70px;
-    }
-    
-    .fab {
-        width: 48px;
-        height: 48px;
-    }
-    
     .document-container {
-        padding: 12px;
+        padding: 12px !important;
+    }
+    
+    .fab-container {
+        bottom: 72px;
     }
 }
 
-/* --- MÓVIL PEQUEÑO (<480px) --- */
+/* --- FIX PARA POCO X7 PRO --- */
 @media (max-width: 480px) {
-    :root {
-        --header-h: 52px;
-    }
-    
-    .app-header {
-        padding: 0 10px;
-    }
-    
-    .logo i {
-        font-size: 1.2rem;
-    }
-    
-    .header-btn {
-        padding: 6px 10px;
-        font-size: 0.8rem;
-    }
-    
-    .toolbar {
-        padding: 6px 8px;
-        gap: 12px;
-    }
-    
-    .tool-btn {
-        width: 44px;
-        height: 44px;
-    }
-    
-    .color-btn {
-        width: 36px;
-        height: 36px;
-    }
-    
-    .documents-panel,
-    #chatbotModal {
-        width: 90%;
-    }
-    
     .document-container {
-        padding: 12px;
+        padding: 12px !important;
     }
     
     .text-content {
@@ -1198,74 +479,21 @@ input[type="range"]::-moz-range-thumb:hover {
     }
 }
 
-/* --- iPad Pro 12.9" específico --- */
-@media only screen 
-    and (min-width: 1024px) 
-    and (max-width: 1366px) 
-    and (-webkit-min-device-pixel-ratio: 2) {
-    
-    :root {
-        --sidebar-w: 300px;
-    }
-    
-    .text-content {
-        max-width: 1000px;
-    }
+/* --- FORZAR SCROLL VISIBLE --- */
+.document-container {
+    overflow: scroll !important;
+    overflow-x: auto !important;
+    overflow-y: auto !important;
 }
 
-/* --- ANIMACIONES ADICIONALES --- */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* --- PREVENIR ZOOM NO DESEADO --- */
+input, textarea, select {
+    font-size: 16px !important;
 }
 
-.document-item {
-    animation: fadeIn 0.4s ease-out backwards;
-}
-
-.document-item:nth-child(1) { animation-delay: 0.05s; }
-.document-item:nth-child(2) { animation-delay: 0.1s; }
-.document-item:nth-child(3) { animation-delay: 0.15s; }
-.document-item:nth-child(4) { animation-delay: 0.2s; }
-.document-item:nth-child(5) { animation-delay: 0.25s; }
-
-/* --- UTILIDADES --- */
-.hidden {
-    display: none !important;
-}
-
-.blur-bg {
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-}
-
-/* --- ACCESIBILIDAD --- */
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
-}
-
-/* Modo oscuro (preparado para futuro) */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg-light: #1a1d23;
-        --bg-white: #242830;
-        --text-primary: #e4e6eb;
-        --text-secondary: #b0b3b8;
-        --text-muted: #8a8d91;
-        --border: #3a3b3d;
-        --bg-document: #18191a;
-        --glass-bg: rgba(36, 40, 48, 0.85);
-    }
+/* --- ASEGURAR VISIBILIDAD --- */
+body, html, .app-container, .main-content, .document-area {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
