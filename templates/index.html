@@ -1,31 +1,30 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <!-- Meta tags críticos para móvil -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#4361ee">
-    <meta name="format-detection" content="telephone=no">
+    <title>Anotador Universal - Qubiz.Team</title>
     
-    <title>Anotador Universal</title>
-    
-    <!-- Iconos Font Awesome -->
+    <!-- Iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- CSS Principal -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <!-- Estilos Completos -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles_completo.css') }}">
     
-    <!-- Prevenir zoom accidental -->
+    <!-- Preconnect para mejor performance -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
     <style>
-        * {
+        /* Touch optimizations */
+        body {
             touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
-        
         #annotationCanvas {
-            touch-action: none !important;
+            touch-action: none;
         }
     </style>
 </head>
@@ -33,204 +32,245 @@
     <!-- Contenedor Principal -->
     <div class="app-container">
         
-        <!-- HEADER -->
+        <!-- ===== HEADER ===== -->
         <header class="app-header">
             <div class="logo">
                 <i class="fas fa-edit"></i>
-                <h1>Anotador</h1>
+                <h1>Anotador Universal</h1>
             </div>
             
             <div class="user-actions">
-                <input type="file" id="fileInput" accept=".pdf,.docx,.txt,.png,.jpg,.jpeg" hidden>
-                <button id="selectFileBtn" class="header-btn secondary">
+                <input type="file" id="fileInput" accept=".pdf,.docx,.txt,.png,.jpg,.jpeg" hidden aria-label="Seleccionar archivo">
+                
+                <button id="selectFileBtn" class="header-btn secondary" aria-label="Subir archivo">
                     <i class="fas fa-cloud-upload-alt"></i>
                     <span>Subir</span>
                 </button>
-                <button id="saveBtn" class="header-btn">
+                
+                <button id="saveBtn" class="header-btn" aria-label="Guardar anotaciones">
                     <i class="fas fa-save"></i>
                     <span>Guardar</span>
+                </button>
+                
+                <button id="shareWhatsApp" class="header-btn" data-action="share-whatsapp" aria-label="Compartir WhatsApp" style="display:none;">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>WhatsApp</span>
+                </button>
+                
+                <button id="shareEmail" class="header-btn" data-action="share-email" aria-label="Compartir Email" style="display:none;">
+                    <i class="fas fa-envelope"></i>
+                    <span>Email</span>
+                </button>
+                
+                <button id="downloadBtn" class="header-btn" data-action="download" aria-label="Descargar PDF" style="display:none;">
+                    <i class="fas fa-download"></i>
+                    <span>Descargar</span>
+                </button>
+                
+                <button id="deleteBtn" class="header-btn" data-action="delete" aria-label="Borrar documento" style="display:none;">
+                    <i class="fas fa-trash"></i>
+                    <span>Borrar</span>
                 </button>
             </div>
         </header>
 
-        <!-- CONTENIDO PRINCIPAL -->
+        <!-- ===== CONTENIDO PRINCIPAL ===== -->
         <div class="main-content">
             
-            <!-- ÁREA DOCUMENTO -->
-            <main class="document-area">
-                <!-- Header Documento -->
-                <div class="document-header">
-                    <div class="doc-title" id="documentTitle">
-                        <i class="fas fa-file-alt"></i> Sin documento
-                    </div>
-                    
-                    <!-- Navegación Páginas -->
-                    <div style="display:flex; align-items:center; gap:10px">
-                        <button id="prevPage" class="tool-btn" style="min-height:36px; padding:6px 12px;">
-                            <i class="fas fa-chevron-left"></i>
+            <!-- ===== BARRA DE HERRAMIENTAS (IZQUIERDA EN DESKTOP) ===== -->
+            <aside class="toolbar">
+                
+                <!-- Herramientas de Dibujo -->
+                <div class="tool-group">
+                    <h4><i class="fas fa-tools"></i> Herramientas</h4>
+                    <div class="tool-buttons">
+                        <button class="tool-btn active" data-tool="pen" aria-label="Lápiz">
+                            <i class="fas fa-pen"></i>
+                            <span>Lápiz</span>
                         </button>
-                        <span id="pageInfo" style="font-size:0.9rem; font-weight:600; min-width:50px; text-align:center;">0/0</span>
-                        <button id="nextPage" class="tool-btn" style="min-height:36px; padding:6px 12px;">
-                            <i class="fas fa-chevron-right"></i>
+                        <button class="tool-btn" data-tool="highlighter" aria-label="Resaltador">
+                            <i class="fas fa-highlighter"></i>
+                            <span>Resaltador</span>
+                        </button>
+                        <button class="tool-btn" data-tool="text" aria-label="Texto">
+                            <i class="fas fa-font"></i>
+                            <span>Texto</span>
+                        </button>
+                        <button class="tool-btn" data-tool="eraser" aria-label="Borrador">
+                            <i class="fas fa-eraser"></i>
+                            <span>Borrador</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Contenedor Documento (CON SCROLL) -->
-                <div class="document-container" id="documentContainer" style="overflow: auto !important; -webkit-overflow-scrolling: touch;">
-                    
-                    <!-- Prompt Subida -->
-                    <div id="uploadPrompt" class="upload-prompt">
+                <!-- Paleta de Colores -->
+                <div class="tool-group">
+                    <h4><i class="fas fa-palette"></i> Colores</h4>
+                    <div class="color-palette">
+                        <div class="color-btn active" style="background:#FFEB3B" data-color="#FFEB3B" aria-label="Amarillo" title="Amarillo"></div>
+                        <div class="color-btn" style="background:#F48FB1" data-color="#F48FB1" aria-label="Rosa" title="Rosa"></div>
+                        <div class="color-btn" style="background:#4CAF50" data-color="#4CAF50" aria-label="Verde" title="Verde"></div>
+                        <div class="color-btn" style="background:#2196F3" data-color="#2196F3" aria-label="Azul" title="Azul"></div>
+                        <div class="color-btn" style="background:#000000" data-color="#000000" aria-label="Negro" title="Negro"></div>
+                    </div>
+                </div>
+
+                <!-- Control de Grosor -->
+                <div class="tool-group">
+                    <h4><i class="fas fa-ruler"></i> Grosor: <span id="brushSizeValue">3px</span></h4>
+                    <input type="range" id="brushSize" min="1" max="20" value="3" aria-label="Ajustar grosor del trazo">
+                </div>
+
+                <!-- Limpiar Página -->
+                <div class="tool-group">
+                    <button id="clearAllBtn" class="tool-btn" style="color:#e53e3e; border-color:#feb2b2" aria-label="Limpiar página actual">
+                        <i class="fas fa-trash-alt"></i>
+                        <span>Limpiar Página</span>
+                    </button>
+                </div>
+
+                <!-- Información del Documento -->
+                <div class="tool-group" id="documentInfoPanel" style="display:none;">
+                    <h4><i class="fas fa-info-circle"></i> Info</h4>
+                    <div id="documentInfo" style="font-size:0.85rem; color:#666;">
+                        <p id="docFilename" style="margin:0 0 8px 0;"></p>
+                        <p id="docPages" style="margin:0;"></p>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- ===== ÁREA DEL DOCUMENTO ===== -->
+            <main id="documentContainer" class="document-container">
+                
+                <!-- Prompt de Subida (Zona Gris) -->
+                <div id="uploadPrompt" class="upload-prompt">
+                    <div class="upload-content">
                         <i class="fas fa-cloud-upload-alt"></i>
-                        <p><strong>Toca para subir</strong></p>
-                        <p style="font-size:0.85rem; margin-top:8px;">PDF, DOCX, TXT, PNG, JPG</p>
+                        <h2>Sube tu documento</h2>
+                        <p>Arrastra y suelta o haz clic para seleccionar</p>
+                        <p class="upload-formats">PDF, DOCX, TXT, PNG, JPG</p>
                     </div>
+                </div>
+
+                <!-- Visor del Documento -->
+                <div id="documentViewer" class="document-viewer" style="display:none;">
                     
-                    <!-- Visor Documento -->
-                    <div id="documentViewer" style="display:none; width:100%;">
-                        <div class="text-content" id="textContent">
-                            <!-- Contenido dinámico -->
+                    <!-- Info del Documento -->
+                    <div class="document-info-bar">
+                        <h3 id="documentTitle">Documento</h3>
+                        <div class="navigation-controls">
+                            <button id="prevPage" class="nav-btn" aria-label="Página anterior">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <span id="pageInfo" class="page-info">1/1</span>
+                            <button id="nextPage" class="nav-btn" aria-label="Página siguiente">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
                         </div>
-                        <canvas id="annotationCanvas"></canvas>
                     </div>
+
+                    <!-- Contenedor del Documento con Canvas de Anotaciones -->
+                    <div class="doc-canvas-container">
+                        <div id="textContent" class="text-content"></div>
+                        <canvas id="annotationCanvas" class="annotation-canvas"></canvas>
+                    </div>
+
                 </div>
             </main>
 
-            <!-- BARRA HERRAMIENTAS (INFERIOR EN MÓVIL) -->
-            <aside class="toolbar">
-                <!-- Herramientas Dibujo -->
-                <div class="tool-group">
-                    <div class="tool-buttons">
-                        <button class="tool-btn active" data-tool="pen">
-                            <i class="fas fa-pen"></i>
-                        </button>
-                        <button class="tool-btn" data-tool="highlighter">
-                            <i class="fas fa-highlighter"></i>
-                        </button>
-                        <button class="tool-btn" data-tool="text">
-                            <i class="fas fa-font"></i>
-                        </button>
-                        <button class="tool-btn" data-tool="eraser">
-                            <i class="fas fa-eraser"></i>
+            <!-- ===== PANEL LATERAL DERECHO (CHATBOT EN DESKTOP) ===== -->
+            <aside class="sidebar-right">
+                
+                <!-- Chatbot -->
+                <div class="panel chatbot-panel">
+                    <h3><i class="fas fa-comments"></i> Chatbot</h3>
+                    <div id="chatbotMessages" class="chatbot-messages"></div>
+                    <div class="chatbot-input-area">
+                        <input type="text" id="chatbotInput" placeholder="Haz una pregunta sobre el documento..." aria-label="Pregunta para el chatbot">
+                        <button id="sendQuestionBtn" aria-label="Enviar pregunta">
+                            <i class="fas fa-paper-plane"></i>
                         </button>
                     </div>
-                </div>
-
-                <!-- Colores -->
-                <div class="tool-group">
-                    <div class="color-palette">
-                        <div class="color-btn active" style="background:#FFEB3B" data-color="#FFEB3B"></div>
-                        <div class="color-btn" style="background:#F48FB1" data-color="#F48FB1"></div>
-                        <div class="color-btn" style="background:#4CAF50" data-color="#4CAF50"></div>
-                        <div class="color-btn" style="background:#2196F3" data-color="#2196F3"></div>
-                        <div class="color-btn" style="background:#000000" data-color="#000000"></div>
-                    </div>
-                </div>
-
-                <!-- Grosor -->
-                <div class="tool-group">
-                    <input type="range" id="brushSize" min="1" max="20" value="3">
-                    <span id="brushSizeValue" style="font-size:0.8rem; white-space:nowrap;">3px</span>
-                </div>
-
-                <!-- Limpiar -->
-                <div class="tool-group">
-                    <button id="clearAllBtn" class="tool-btn">
-                        <i class="fas fa-trash-alt"></i>
+                    <button id="clearChatBtn" class="clear-chat-btn" aria-label="Limpiar chat">
+                        <i class="fas fa-broom"></i> Limpiar Chat
                     </button>
                 </div>
-            </aside>
 
-            <!-- PANEL DOCUMENTOS (MODAL MÓVIL) -->
-            <aside class="documents-panel mobile-only" id="rightPanel">
-                <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+                <!-- Lista de Documentos -->
+                <div class="panel documents-panel">
                     <h3><i class="fas fa-folder-open"></i> Documentos</h3>
-                    <button onclick="togglePanel('rightPanel')" style="border:none; background:none; font-size:1.2rem;">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <div id="documentsList" class="documents-list">
+                        <p class="no-documents">Sin documentos guardados</p>
+                    </div>
                 </div>
-                <div id="documentsList">Cargando...</div>
+
             </aside>
 
-            <!-- CHATBOT MODAL (MÓVIL) -->
-            <div id="chatbotModal" class="mobile-only">
-                <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
-                    <h3><i class="fas fa-robot"></i> Chat IA</h3>
-                    <button onclick="togglePanel('chatbotModal')" style="border:none; background:none; font-size:1.2rem;">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <div class="chatbot-messages" id="chatbotMessages" style="flex:1; overflow-y:auto; background:#f9f9f9; padding:10px; border-radius:8px; margin-bottom:12px;">
-                    <div class="message bot">Sube un documento y pregúntame sobre él.</div>
-                </div>
-                
-                <div class="chatbot-input">
-                    <input type="text" id="chatbotInput" placeholder="Escribe tu pregunta...">
-                    <button id="sendQuestionBtn" class="tool-btn">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
-                <button id="clearChatBtn" class="tool-btn" style="margin-top:8px; width:100%;">
-                    <i class="fas fa-broom"></i>
-                    <span>Limpiar Chat</span>
-                </button>
-            </div>
-
-        </div>
-        
-        <!-- BOTONES FLOTANTES (FAB) -->
-        <div class="fab-container mobile-only">
-            <button class="fab" onclick="togglePanel('chatbotModal')" style="background:#7209b7;">
-                <i class="fas fa-robot"></i>
-            </button>
-            <button class="fab" onclick="togglePanel('rightPanel')">
-                <i class="fas fa-folder-open"></i>
-            </button>
         </div>
     </div>
 
-    <!-- OVERLAY PARA MODALES -->
-    <div id="modalOverlay" onclick="closeAllPanels()"></div>
+    <!-- ===== FAB BUTTONS (MÓVIL) ===== -->
+    <div class="fab-container">
+        <button class="fab fab-chatbot" id="fabChatbot" aria-label="Abrir chatbot">
+            <i class="fas fa-comments"></i>
+        </button>
+        <button class="fab fab-documents" id="fabDocuments" aria-label="Abrir documentos">
+            <i class="fas fa-folder-open"></i>
+        </button>
+    </div>
 
-    <!-- JavaScript Principal -->
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <!-- ===== MODALES (MÓVIL) ===== -->
     
-    <!-- HOTFIX MÓVIL (IMPORTANTE) -->
-    <script src="{{ url_for('static', filename='js/hotfix_mobile.js') }}"></script>
+    <!-- Modal Chatbot -->
+    <div class="modal" id="chatbotModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-comments"></i> Chatbot</h3>
+                <button class="modal-close" id="closeChatbot" aria-label="Cerrar chatbot">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="modalChatbotMessages" class="chatbot-messages"></div>
+                <div class="chatbot-input-area">
+                    <input type="text" id="modalChatbotInput" placeholder="Haz una pregunta..." aria-label="Pregunta para el chatbot">
+                    <button id="modalSendQuestionBtn" aria-label="Enviar pregunta">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <button id="modalClearChatBtn" class="clear-chat-btn" aria-label="Limpiar chat">
+                    <i class="fas fa-broom"></i> Limpiar Chat
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Documentos -->
+    <div class="modal" id="documentsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-folder-open"></i> Documentos</h3>
+                <button class="modal-close" id="closeDocuments" aria-label="Cerrar documentos">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="modalDocumentsList" class="documents-list">
+                    <p class="no-documents">Sin documentos guardados</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Completo -->
+    <script src="{{ url_for('static', filename='js/app_completo.js') }}"></script>
     
-    <!-- Scripts Paneles -->
     <script>
-        function togglePanel(id) {
-            const panel = document.getElementById(id);
-            const overlay = document.getElementById('modalOverlay');
-            
-            if (panel.classList.contains('open')) {
-                panel.classList.remove('open');
-                overlay.style.display = 'none';
-            } else {
-                document.querySelectorAll('.documents-panel, #chatbotModal').forEach(p => p.classList.remove('open'));
-                panel.classList.add('open');
-                overlay.style.display = 'block';
-            }
-        }
-        
-        function closeAllPanels() {
-            document.querySelectorAll('.documents-panel, #chatbotModal').forEach(p => p.classList.remove('open'));
-            document.getElementById('modalOverlay').style.display = 'none';
-        }
-        
-        // Cerrar con ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeAllPanels();
-        });
-        
-        // Log de debug inicial
-        console.log('=== INIT DEBUG ===');
-        console.log('Screen:', screen.width, 'x', screen.height);
-        console.log('Window:', innerWidth, 'x', innerHeight);
-        console.log('DPR:', devicePixelRatio);
-        console.log('User Agent:', navigator.userAgent);
+        console.log('🚀 Anotador Universal cargado');
+        console.log('📱 Dispositivo:', navigator.userAgent);
+        console.log('📏 Viewport:', window.innerWidth, 'x', window.innerHeight);
+        console.log('🔢 DPR:', window.devicePixelRatio);
     </script>
+
 </body>
 </html>
