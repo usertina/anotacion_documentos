@@ -806,6 +806,546 @@ window.addEventListener('orientationchange', () => {
         }
     }, 500);
 });
+// ========================================
+// PARCHE: FUNCIONES COMPARTIR, GUARDAR, BORRAR, CHATBOT
+// Añadir DESPUÉS de app.js
+// ========================================
+
+console.log('🔧 Cargando parche de funciones...');
+
+// --- COMPARTIR POR WHATSAPP ---
+window.shareWhatsApp = async function() {
+    console.log('📱 Compartir por WhatsApp');
+    
+    if (!AppState.currentDocId) {
+        alert('⚠️ Primero carga un documento');
+        return;
+    }
+    
+    try {
+        // Generar PDF del documento con anotaciones
+        showMessage('Generando PDF...');
+        
+        const response = await fetch('/export_pdf', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                doc_id: AppState.currentDocId,
+                annotations: AppState.annotations
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Error al generar PDF');
+        }
+        
+        const blob = await response.blob();
+        const file = new File([blob], `${AppState.filename}_anotado.pdf`, { type: 'application/pdf' });
+        
+        // Verificar si Web Share API está disponible
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+                title: AppState.filename,
+                text: 'Documento anotado',
+                files: [file]
+            });
+            showMessage('✅ Compartido');
+        } else {
+            // Fallback: abrir WhatsApp Web con texto
+            const text = encodeURIComponent(`Documento: ${AppState.filename}\n\n📄 Documento anotado disponible`);
+            const whatsappUrl = `https://wa.me/?text=${text}`;
+            window.open(whatsappUrl, '_blank');
+            showMessage('💬 Abriendo WhatsApp...');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error al compartir:', error);
+        
+        // Fallback simple
+        const text = encodeURIComponent(`📄 Documento: ${AppState.filename}\n\nRevisado y anotado`);
+        const whatsappUrl = `https://wa.me/?text=${text}`;
+        window.open(whatsappUrl, '_blank');
+        showMessage('💬 Abriendo WhatsApp (solo texto)');
+    }
+};
+
+// --- COMPARTIR POR EMAIL ---
+window.shareEmail = async function() {
+    console.log('📧 Compartir por Email');
+    
+    if (!AppState.currentDocId) {
+        alert('⚠️ Primero carga un documento');
+        return;
+    }
+    
+    try {
+        // Intentar generar PDF
+        showMessage('Preparando email...');
+        
+        const subject = encodeURIComponent(`Documento: ${AppState.filename}`);
+        const body = encodeURIComponent(
+            `Hola,\n\n` +
+            `Te envío el documento "${AppState.filename}" revisado y anotado.\n\n` +
+            `Documento procesado con el sistema de anotaciones.\n\n` +
+            `Saludos`
+        );
+        
+        const mailtoLink = `mailto:?subject=${subject}&body=${body}`;
+        
+        // Intentar usar Web Share API si está disponible
+        if (navigator.share) {
+            try {
+                const response = await fetch('/export_pdf', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        doc_id: AppState.currentDocId,
+                        annotations: AppState.annotations
+                    })
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const file = new File([blob], `${AppState.filename}_anotado.pdf`, { type: 'application/pdf' });
+                    
+                    if (navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            title: AppState.filename,
+                            text: 'Documento anotado',
+                            files: [file]
+                        });
+                        showMessage('✅ Compartido');
+                        return;
+                    }
+                }
+            } catch (shareError) {
+                console.log('Share API no disponible, usando mailto');
+            }
+        }
+        
+        // Fallback: mailto simple
+        window.location.href = mailtoLink;
+        showMessage('📧 Abriendo email...');
+        
+    } catch (error) {
+        console.error('❌ Error:', error);
+        alert('❌ Error al preparar email');
+    }
+};
+
+// --- DESCARGAR DOCUMENTO ---
+window.downloadDocument = async function() {
+    console.log('💾 Descargar documento');
+    
+    if (!AppState.currentDocId) {
+        alert('⚠️ Primero carga un documento');
+        return;
+    }
+    
+    try {
+        showMessage('Generando PDF...');
+        
+        const response = await fetch('/export_pdf', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                doc_id: AppState.currentDocId,
+                annotations: AppState.annotations
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Error al generar PDF');
+        }
+        
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${AppState.filename}_anotado.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        showMessage('✅ Documento descargado');
+        
+    } catch (error) {
+        console.error('❌ Error al descargar:', error);
+        alert('❌ Error al descargar documento');
+    }
+};
+
+// --- BORRAR DOCUMENTO ---
+window.deleteDocument = async function() {
+    console.log('🗑️ Borrar documento');
+    
+    if (!AppState.currentDocId) {
+        alert('⚠️ No hay documento cargado');
+        return;
+    }
+    
+    const confirmDelete = confirm(`¿Estás seguro de borrar "${AppState.filename}"?\n\nEsta acción no se puede deshacer.`);
+    
+    if (!confirmDelete) {
+        return;
+    }
+    
+    try {
+        showMessage('Borrando...');
+        
+        const response = await fetch('/delete_document', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                doc_id: AppState.currentDocId
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showMessage('✅ Documento borrado');
+            
+            // Reset state
+            AppState.currentDocId = null;
+            AppState.filename = '';
+            AppState.annotations = [];
+            AppState.documentImages = [];
+            AppState.documentText = '';
+            AppState.currentPage = 0;
+            AppState.totalPages = 0;
+            
+            // Mostrar pantalla de subida
+            if (DOM.documentViewer) DOM.documentViewer.style.display = 'none';
+            if (DOM.uploadPrompt) DOM.uploadPrompt.style.display = 'flex';
+            
+            // Actualizar lista de documentos
+            if (typeof loadDocumentsList === 'function') {
+                loadDocumentsList();
+            }
+            
+            // Cerrar modal si está abierto
+            closeDocumentsModal();
+            
+        } else {
+            throw new Error(data.error || 'Error al borrar');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error al borrar:', error);
+        alert('❌ Error al borrar documento: ' + error.message);
+    }
+};
+
+// --- MEJORAR FUNCIÓN DE GUARDAR ---
+if (typeof saveAnnotations !== 'undefined') {
+    console.log('🔄 Mejorando función saveAnnotations...');
+    
+    const originalSave = saveAnnotations;
+    
+    window.saveAnnotations = async function() {
+        console.log('💾 Guardando anotaciones (versión mejorada)...');
+        
+        if (!AppState.currentDocId) {
+            alert('⚠️ No hay documento cargado');
+            return;
+        }
+        
+        if (AppState.annotations.length === 0) {
+            const confirmSave = confirm('No hay anotaciones. ¿Guardar de todos modos?');
+            if (!confirmSave) return;
+        }
+        
+        try {
+            showMessage('💾 Guardando...');
+            
+            const response = await fetch('/save_annotations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    doc_id: AppState.currentDocId,
+                    annotations: AppState.annotations
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showMessage('✅ Guardado correctamente');
+                
+                // Mostrar notificación temporal
+                showTemporaryNotification('✅ Documento guardado', 2000);
+                
+                // Actualizar lista de documentos
+                if (typeof loadDocumentsList === 'function') {
+                    loadDocumentsList();
+                }
+            } else {
+                throw new Error(data.error || 'Error al guardar');
+            }
+            
+        } catch (error) {
+            console.error('❌ Error al guardar:', error);
+            showMessage('❌ Error al guardar');
+            alert('❌ Error al guardar: ' + error.message);
+        }
+    };
+}
+
+// --- CHATBOT MEJORADO ---
+if (typeof sendQuestion !== 'undefined') {
+    console.log('🔄 Mejorando función sendQuestion...');
+    
+    window.sendQuestion = async function() {
+        const input = DOM.chatbotInput;
+        if (!input) {
+            console.error('❌ chatbotInput no encontrado');
+            return;
+        }
+        
+        const question = input.value.trim();
+        
+        if (!question) {
+            alert('⚠️ Escribe una pregunta');
+            return;
+        }
+        
+        if (!AppState.currentDocId) {
+            alert('⚠️ Primero carga un documento');
+            return;
+        }
+        
+        console.log('💬 Enviando pregunta:', question);
+        
+        // Añadir mensaje del usuario
+        addChatMessage('user', question);
+        input.value = '';
+        
+        // Mensaje de escritura
+        const typingId = 'typing-' + Date.now();
+        addChatMessage('bot', '...', 'typing', typingId);
+        
+        try {
+            const response = await fetch('/ask_chatbot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    doc_id: AppState.currentDocId,
+                    question: question,
+                    chat_history: AppState.chatHistory || []
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            // Remover mensaje de escritura
+            removeMessageById(typingId);
+            
+            if (data.success) {
+                addChatMessage('bot', data.answer);
+                AppState.chatHistory = AppState.chatHistory || [];
+                AppState.chatHistory.push({ question, answer: data.answer });
+            } else {
+                addChatMessage('bot', '❌ Error: ' + (data.error || 'Sin respuesta'));
+            }
+            
+        } catch (error) {
+            console.error('❌ Error en chatbot:', error);
+            removeMessageById(typingId);
+            addChatMessage('bot', '❌ Error al comunicar con el servidor: ' + error.message);
+        }
+    };
+}
+
+// Helper para remover mensaje por ID
+function removeMessageById(id) {
+    const msg = document.getElementById(id);
+    if (msg) msg.remove();
+}
+
+// Helper mejorado para añadir mensajes
+function addChatMessage(type, text, extraClass = '', id = '') {
+    if (!DOM.chatbotMessages) {
+        console.error('❌ chatbotMessages no encontrado');
+        return;
+    }
+    
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `message ${type} ${extraClass}`;
+    msgDiv.textContent = text;
+    if (id) msgDiv.id = id;
+    
+    msgDiv.style.cssText = `
+        padding: 12px 16px;
+        margin-bottom: 10px;
+        border-radius: 12px;
+        max-width: 85%;
+        word-wrap: break-word;
+        ${type === 'user' ? 
+            'background: #4361ee; color: white; align-self: flex-end; margin-left: auto;' : 
+            'background: #f0f0f0; color: #333; align-self: flex-start;'}
+        ${extraClass === 'typing' ? 'font-style: italic; opacity: 0.7;' : ''}
+    `;
+    
+    DOM.chatbotMessages.appendChild(msgDiv);
+    DOM.chatbotMessages.scrollTop = DOM.chatbotMessages.scrollHeight;
+}
+
+// --- NOTIFICACIÓN TEMPORAL ---
+function showTemporaryNotification(message, duration = 3000) {
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #4caf50;
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 10000;
+        font-weight: 600;
+        font-size: 1rem;
+        animation: slideDown 0.3s ease;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideUp 0.3s ease';
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, duration);
+}
+
+// Añadir animaciones
+if (!document.getElementById('notification-animations')) {
+    const style = document.createElement('style');
+    style.id = 'notification-animations';
+    style.textContent = `
+        @keyframes slideDown {
+            from {
+                transform: translate(-50%, -100%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+        }
+        @keyframes slideUp {
+            from {
+                transform: translate(-50%, 0);
+                opacity: 1;
+            }
+            to {
+                transform: translate(-50%, -100%);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// --- ADJUNTAR LISTENERS A BOTONES ---
+function attachActionListeners() {
+    console.log('🔗 Adjuntando listeners de acciones...');
+    
+    // Botón guardar (si existe en DOM)
+    const saveBtn = document.getElementById('saveBtn');
+    if (saveBtn && !saveBtn.dataset.listenerAttached) {
+        saveBtn.addEventListener('click', saveAnnotations);
+        saveBtn.dataset.listenerAttached = 'true';
+        console.log('✅ Listener: saveBtn');
+    }
+    
+    // Botones de compartir
+    const shareWhatsAppBtns = document.querySelectorAll('[data-action="share-whatsapp"], .share-whatsapp, #shareWhatsApp');
+    shareWhatsAppBtns.forEach(btn => {
+        if (!btn.dataset.listenerAttached) {
+            btn.addEventListener('click', shareWhatsApp);
+            btn.dataset.listenerAttached = 'true';
+            console.log('✅ Listener: shareWhatsApp');
+        }
+    });
+    
+    const shareEmailBtns = document.querySelectorAll('[data-action="share-email"], .share-email, #shareEmail');
+    shareEmailBtns.forEach(btn => {
+        if (!btn.dataset.listenerAttached) {
+            btn.addEventListener('click', shareEmail);
+            btn.dataset.listenerAttached = 'true';
+            console.log('✅ Listener: shareEmail');
+        }
+    });
+    
+    // Botón descargar
+    const downloadBtns = document.querySelectorAll('[data-action="download"], .download-btn, #downloadBtn');
+    downloadBtns.forEach(btn => {
+        if (!btn.dataset.listenerAttached) {
+            btn.addEventListener('click', downloadDocument);
+            btn.dataset.listenerAttached = 'true';
+            console.log('✅ Listener: downloadBtn');
+        }
+    });
+    
+    // Botón borrar
+    const deleteBtns = document.querySelectorAll('[data-action="delete"], .delete-btn, #deleteBtn');
+    deleteBtns.forEach(btn => {
+        if (!btn.dataset.listenerAttached) {
+            btn.addEventListener('click', deleteDocument);
+            btn.dataset.listenerAttached = 'true';
+            console.log('✅ Listener: deleteBtn');
+        }
+    });
+    
+    // Chatbot - botón enviar
+    const sendBtn = document.getElementById('sendQuestionBtn');
+    if (sendBtn && !sendBtn.dataset.listenerAttached) {
+        sendBtn.addEventListener('click', sendQuestion);
+        sendBtn.dataset.listenerAttached = 'true';
+        console.log('✅ Listener: sendQuestionBtn');
+    }
+    
+    // Chatbot - Enter en input
+    const chatInput = document.getElementById('chatbotInput');
+    if (chatInput && !chatInput.dataset.listenerAttached) {
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendQuestion();
+            }
+        });
+        chatInput.dataset.listenerAttached = 'true';
+        console.log('✅ Listener: chatbotInput Enter');
+    }
+}
+
+// Adjuntar listeners cuando el DOM esté listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', attachActionListeners);
+} else {
+    attachActionListeners();
+}
+
+// También adjuntar después de 1 segundo (por si se cargan dinámicamente)
+setTimeout(attachActionListeners, 1000);
+
+console.log('✅ Parche de funciones cargado');
+console.log('📋 Funciones disponibles:');
+console.log('  • shareWhatsApp()');
+console.log('  • shareEmail()');
+console.log('  • downloadDocument()');
+console.log('  • deleteDocument()');
+console.log('  • saveAnnotations()');
+console.log('  • sendQuestion()');
 
 // --- INICIAR AL CARGAR ---
 if (document.readyState === 'loading') {
