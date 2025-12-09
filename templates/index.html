@@ -1,202 +1,177 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- Meta tags críticos para móvil -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#4361ee">
-    <title>Anotador Universal - Qubiz.Team</title>
+    <meta name="format-detection" content="telephone=no">
     
-    <!-- Iconos -->
+    <title>Anotador Universal</title>
+    
+    <!-- Iconos Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Estilos -->
+    <!-- CSS Principal -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     
-    <!-- Preconnect para mejor performance -->
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <!-- Prevenir zoom accidental -->
+    <style>
+        * {
+            touch-action: manipulation;
+        }
+        
+        #annotationCanvas {
+            touch-action: none !important;
+        }
+    </style>
 </head>
 <body>
     <!-- Contenedor Principal -->
     <div class="app-container">
         
-        <!-- ===== HEADER ===== -->
+        <!-- HEADER -->
         <header class="app-header">
             <div class="logo">
                 <i class="fas fa-edit"></i>
-                <h1>Anotador Universal</h1>
+                <h1>Anotador</h1>
             </div>
             
             <div class="user-actions">
-                <input type="file" id="fileInput" accept=".pdf,.docx,.txt,.png,.jpg,.jpeg" hidden aria-label="Seleccionar archivo">
-                
-                <button id="selectFileBtn" class="header-btn secondary" aria-label="Subir archivo">
+                <input type="file" id="fileInput" accept=".pdf,.docx,.txt,.png,.jpg,.jpeg" hidden>
+                <button id="selectFileBtn" class="header-btn secondary">
                     <i class="fas fa-cloud-upload-alt"></i>
                     <span>Subir</span>
                 </button>
-                
-                <button id="saveBtn" class="header-btn" aria-label="Guardar anotaciones">
+                <button id="saveBtn" class="header-btn">
                     <i class="fas fa-save"></i>
                     <span>Guardar</span>
                 </button>
             </div>
         </header>
 
-        <!-- ===== CONTENIDO PRINCIPAL ===== -->
+        <!-- CONTENIDO PRINCIPAL -->
         <div class="main-content">
             
-            <!-- ===== BARRA DE HERRAMIENTAS (IZQUIERDA EN DESKTOP) ===== -->
-            <aside class="toolbar">
-                
-                <!-- Herramientas de Dibujo -->
-                <div class="tool-group">
-                    <h4><i class="fas fa-tools"></i> Herramientas</h4>
-                    <div class="tool-buttons">
-                        <button class="tool-btn active" data-tool="pen" aria-label="Lápiz">
-                            <i class="fas fa-pen"></i>
-                            <span>Lápiz</span>
-                        </button>
-                        <button class="tool-btn" data-tool="highlighter" aria-label="Resaltador">
-                            <i class="fas fa-highlighter"></i>
-                            <span>Resaltador</span>
-                        </button>
-                        <button class="tool-btn" data-tool="text" aria-label="Texto">
-                            <i class="fas fa-font"></i>
-                            <span>Texto</span>
-                        </button>
-                        <button class="tool-btn" data-tool="eraser" aria-label="Borrador">
-                            <i class="fas fa-eraser"></i>
-                            <span>Borrador</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Paleta de Colores -->
-                <div class="tool-group">
-                    <h4><i class="fas fa-palette"></i> Colores</h4>
-                    <div class="color-palette">
-                        <div class="color-btn active" style="background:#FFEB3B" data-color="#FFEB3B" aria-label="Amarillo" title="Amarillo"></div>
-                        <div class="color-btn" style="background:#F48FB1" data-color="#F48FB1" aria-label="Rosa" title="Rosa"></div>
-                        <div class="color-btn" style="background:#4CAF50" data-color="#4CAF50" aria-label="Verde" title="Verde"></div>
-                        <div class="color-btn" style="background:#2196F3" data-color="#2196F3" aria-label="Azul" title="Azul"></div>
-                        <div class="color-btn" style="background:#000000" data-color="#000000" aria-label="Negro" title="Negro"></div>
-                    </div>
-                </div>
-
-                <!-- Control de Grosor -->
-                <div class="tool-group">
-                    <h4><i class="fas fa-ruler"></i> Grosor: <span id="brushSizeValue">3px</span></h4>
-                    <input type="range" id="brushSize" min="1" max="20" value="3" aria-label="Ajustar grosor del trazo">
-                </div>
-
-                <!-- Limpiar Página -->
-                <div class="tool-group">
-                    <button id="clearAllBtn" class="tool-btn" style="color:#e53e3e; border-color:#feb2b2" aria-label="Limpiar página actual">
-                        <i class="fas fa-trash-alt"></i>
-                        <span>Limpiar Página</span>
-                    </button>
-                </div>
-
-                <!-- Chatbot IA (Solo Desktop) -->
-                <div class="chatbot-section desktop-only">
-                    <h3><i class="fas fa-robot"></i> Asistente IA</h3>
-                    <div class="chatbot-messages" id="chatbotMessagesDesktop">
-                        <div class="message bot">¡Hola! Sube un documento y pregúntame lo que quieras sobre él.</div>
-                    </div>
-                    <div class="chatbot-input">
-                        <input type="text" id="chatbotInputDesktop" placeholder="Escribe tu pregunta..." aria-label="Pregunta al chatbot">
-                        <button id="sendQuestionBtnDesktop" class="tool-btn" aria-label="Enviar pregunta">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </div>
-                    <button id="clearChatBtnDesktop" class="tool-btn" style="margin-top:8px; font-size:0.85rem">
-                        <i class="fas fa-broom"></i>
-                        <span>Limpiar Chat</span>
-                    </button>
-                </div>
-            </aside>
-
-            <!-- ===== ÁREA CENTRAL - DOCUMENTO ===== -->
+            <!-- ÁREA DOCUMENTO -->
             <main class="document-area">
-                
-                <!-- Header del Documento -->
+                <!-- Header Documento -->
                 <div class="document-header">
                     <div class="doc-title" id="documentTitle">
                         <i class="fas fa-file-alt"></i> Sin documento
                     </div>
                     
-                    <!-- Navegación de Páginas -->
+                    <!-- Navegación Páginas -->
                     <div style="display:flex; align-items:center; gap:10px">
-                        <button id="prevPage" class="tool-btn" style="min-height:36px; padding:6px 12px" aria-label="Página anterior">
+                        <button id="prevPage" class="tool-btn" style="min-height:36px; padding:6px 12px;">
                             <i class="fas fa-chevron-left"></i>
                         </button>
-                        <span id="pageInfo" style="font-size:0.9rem; font-weight:600; min-width:60px; text-align:center">0/0</span>
-                        <button id="nextPage" class="tool-btn" style="min-height:36px; padding:6px 12px" aria-label="Página siguiente">
+                        <span id="pageInfo" style="font-size:0.9rem; font-weight:600; min-width:50px; text-align:center;">0/0</span>
+                        <button id="nextPage" class="tool-btn" style="min-height:36px; padding:6px 12px;">
                             <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
                 </div>
 
-                <!-- Contenedor del Documento -->
-                <div class="document-container" id="documentContainer">
+                <!-- Contenedor Documento (CON SCROLL) -->
+                <div class="document-container" id="documentContainer" style="overflow: auto !important; -webkit-overflow-scrolling: touch;">
                     
-                    <!-- Prompt de Subida -->
+                    <!-- Prompt Subida -->
                     <div id="uploadPrompt" class="upload-prompt">
                         <i class="fas fa-cloud-upload-alt"></i>
-                        <p><strong>Arrastra un archivo aquí</strong></p>
-                        <p style="font-size:0.9rem; margin-top:8px; opacity:0.7">o haz clic para seleccionar</p>
-                        <p style="font-size:0.85rem; margin-top:12px; opacity:0.6">PDF, DOCX, TXT, PNG, JPG • Max 16MB</p>
+                        <p><strong>Toca para subir</strong></p>
+                        <p style="font-size:0.85rem; margin-top:8px;">PDF, DOCX, TXT, PNG, JPG</p>
                     </div>
                     
-                    <!-- Visor del Documento -->
+                    <!-- Visor Documento -->
                     <div id="documentViewer" style="display:none; width:100%;">
                         <div class="text-content" id="textContent">
-                            <!-- El contenido se carga aquí dinámicamente -->
+                            <!-- Contenido dinámico -->
                         </div>
-                        <canvas id="annotationCanvas" aria-label="Canvas de anotaciones"></canvas>
+                        <canvas id="annotationCanvas"></canvas>
                     </div>
                 </div>
             </main>
 
-            <!-- ===== PANEL DERECHO - DOCUMENTOS GUARDADOS ===== -->
-            <aside class="documents-panel" id="rightPanel">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
-                    <h3><i class="fas fa-folder-open"></i> Mis Documentos</h3>
-                    <button class="mobile-only tool-btn" onclick="togglePanel('rightPanel')" style="min-height:36px; width:36px; padding:0" aria-label="Cerrar panel">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <div id="documentsList">
-                    <div class="empty-docs">
-                        <i class="fas fa-inbox" style="font-size:2rem; opacity:0.3; margin-bottom:8px"></i>
-                        <p>Cargando documentos...</p>
+            <!-- BARRA HERRAMIENTAS (INFERIOR EN MÓVIL) -->
+            <aside class="toolbar">
+                <!-- Herramientas Dibujo -->
+                <div class="tool-group">
+                    <div class="tool-buttons">
+                        <button class="tool-btn active" data-tool="pen">
+                            <i class="fas fa-pen"></i>
+                        </button>
+                        <button class="tool-btn" data-tool="highlighter">
+                            <i class="fas fa-highlighter"></i>
+                        </button>
+                        <button class="tool-btn" data-tool="text">
+                            <i class="fas fa-font"></i>
+                        </button>
+                        <button class="tool-btn" data-tool="eraser">
+                            <i class="fas fa-eraser"></i>
+                        </button>
                     </div>
+                </div>
+
+                <!-- Colores -->
+                <div class="tool-group">
+                    <div class="color-palette">
+                        <div class="color-btn active" style="background:#FFEB3B" data-color="#FFEB3B"></div>
+                        <div class="color-btn" style="background:#F48FB1" data-color="#F48FB1"></div>
+                        <div class="color-btn" style="background:#4CAF50" data-color="#4CAF50"></div>
+                        <div class="color-btn" style="background:#2196F3" data-color="#2196F3"></div>
+                        <div class="color-btn" style="background:#000000" data-color="#000000"></div>
+                    </div>
+                </div>
+
+                <!-- Grosor -->
+                <div class="tool-group">
+                    <input type="range" id="brushSize" min="1" max="20" value="3">
+                    <span id="brushSizeValue" style="font-size:0.8rem; white-space:nowrap;">3px</span>
+                </div>
+
+                <!-- Limpiar -->
+                <div class="tool-group">
+                    <button id="clearAllBtn" class="tool-btn">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
                 </div>
             </aside>
 
-            <!-- ===== MODAL CHATBOT (SOLO MÓVIL) ===== -->
+            <!-- PANEL DOCUMENTOS (MODAL MÓVIL) -->
+            <aside class="documents-panel mobile-only" id="rightPanel">
+                <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+                    <h3><i class="fas fa-folder-open"></i> Documentos</h3>
+                    <button onclick="togglePanel('rightPanel')" style="border:none; background:none; font-size:1.2rem;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="documentsList">Cargando...</div>
+            </aside>
+
+            <!-- CHATBOT MODAL (MÓVIL) -->
             <div id="chatbotModal" class="mobile-only">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
-                    <h3><i class="fas fa-robot"></i> Asistente IA</h3>
-                    <button onclick="togglePanel('chatbotModal')" class="tool-btn" style="min-height:36px; width:36px; padding:0" aria-label="Cerrar chat">
+                <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+                    <h3><i class="fas fa-robot"></i> Chat IA</h3>
+                    <button onclick="togglePanel('chatbotModal')" style="border:none; background:none; font-size:1.2rem;">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
                 
-                <div class="chatbot-messages" id="chatbotMessagesMobile">
-                    <div class="message bot">¡Hola! Sube un documento y pregúntame lo que quieras sobre él.</div>
+                <div class="chatbot-messages" id="chatbotMessages" style="flex:1; overflow-y:auto; background:#f9f9f9; padding:10px; border-radius:8px; margin-bottom:12px;">
+                    <div class="message bot">Sube un documento y pregúntame sobre él.</div>
                 </div>
                 
-                <div class="chatbot-input" style="margin-top:12px;">
-                    <input type="text" id="chatbotInputMobile" placeholder="Escribe tu pregunta..." aria-label="Pregunta al chatbot">
-                    <button id="sendQuestionBtnMobile" class="tool-btn" aria-label="Enviar pregunta">
+                <div class="chatbot-input">
+                    <input type="text" id="chatbotInput" placeholder="Escribe tu pregunta...">
+                    <button id="sendQuestionBtn" class="tool-btn">
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </div>
-                
-                <button id="clearChatBtnMobile" class="tool-btn" style="margin-top:8px; width:100%">
+                <button id="clearChatBtn" class="tool-btn" style="margin-top:8px; width:100%;">
                     <i class="fas fa-broom"></i>
                     <span>Limpiar Chat</span>
                 </button>
@@ -204,33 +179,28 @@
 
         </div>
         
-        <!-- ===== BOTONES FLOTANTES (SOLO MÓVIL) ===== -->
+        <!-- BOTONES FLOTANTES (FAB) -->
         <div class="fab-container mobile-only">
-            <button class="fab" onclick="togglePanel('chatbotModal')" style="background:var(--secondary)" aria-label="Abrir chat IA" title="Chat IA">
+            <button class="fab" onclick="togglePanel('chatbotModal')" style="background:#7209b7;">
                 <i class="fas fa-robot"></i>
             </button>
-            <button class="fab" onclick="togglePanel('rightPanel')" aria-label="Abrir documentos" title="Mis Documentos">
+            <button class="fab" onclick="togglePanel('rightPanel')">
                 <i class="fas fa-folder-open"></i>
             </button>
         </div>
     </div>
 
-    <!-- ===== OVERLAY PARA MODALES MÓVIL ===== -->
-    <div id="modalOverlay" class="mobile-only" style="
-        position:fixed; 
-        inset:0; 
-        background:rgba(0,0,0,0.5); 
-        z-index:90; 
-        display:none;
-        backdrop-filter: blur(4px);
-    " onclick="closeAllPanels()"></div>
+    <!-- OVERLAY PARA MODALES -->
+    <div id="modalOverlay" onclick="closeAllPanels()"></div>
 
     <!-- JavaScript Principal -->
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
     
-    <!-- Script para manejo de paneles móviles -->
+    <!-- HOTFIX MÓVIL (IMPORTANTE) -->
+    <script src="{{ url_for('static', filename='js/hotfix_mobile.js') }}"></script>
+    
+    <!-- Scripts Paneles -->
     <script>
-        // Toggle de paneles laterales en móvil
         function togglePanel(id) {
             const panel = document.getElementById(id);
             const overlay = document.getElementById('modalOverlay');
@@ -239,41 +209,28 @@
                 panel.classList.remove('open');
                 overlay.style.display = 'none';
             } else {
-                // Cerrar otros paneles primero
-                document.querySelectorAll('.documents-panel, #chatbotModal').forEach(p => {
-                    p.classList.remove('open');
-                });
-                
-                // Abrir el seleccionado
+                document.querySelectorAll('.documents-panel, #chatbotModal').forEach(p => p.classList.remove('open'));
                 panel.classList.add('open');
                 overlay.style.display = 'block';
             }
         }
         
-        // Cerrar todos los paneles
         function closeAllPanels() {
-            document.querySelectorAll('.documents-panel, #chatbotModal').forEach(panel => {
-                panel.classList.remove('open');
-            });
+            document.querySelectorAll('.documents-panel, #chatbotModal').forEach(p => p.classList.remove('open'));
             document.getElementById('modalOverlay').style.display = 'none';
         }
         
-        // Cerrar paneles con ESC
+        // Cerrar con ESC
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeAllPanels();
-            }
+            if (e.key === 'Escape') closeAllPanels();
         });
         
-        // Prevenir scroll del body cuando un modal está abierto
-        const observer = new MutationObserver(() => {
-            const anyOpen = document.querySelector('.documents-panel.open, #chatbotModal.open');
-            document.body.style.overflow = anyOpen ? 'hidden' : '';
-        });
-        
-        document.querySelectorAll('.documents-panel, #chatbotModal').forEach(el => {
-            observer.observe(el, { attributes: true, attributeFilter: ['class'] });
-        });
+        // Log de debug inicial
+        console.log('=== INIT DEBUG ===');
+        console.log('Screen:', screen.width, 'x', screen.height);
+        console.log('Window:', innerWidth, 'x', innerHeight);
+        console.log('DPR:', devicePixelRatio);
+        console.log('User Agent:', navigator.userAgent);
     </script>
 </body>
 </html>
