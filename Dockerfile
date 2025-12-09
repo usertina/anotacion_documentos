@@ -1,5 +1,5 @@
 # Usar una imagen ligera de Python
-FROM python:3.9-slim
+FROM python:3.11-slim
 
 # 1. Instalar Poppler (necesario para pdf2image)
 RUN apt-get update && apt-get install -y \
