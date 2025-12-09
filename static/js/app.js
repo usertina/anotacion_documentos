@@ -806,6 +806,20 @@ window.addEventListener('orientationchange', () => {
         }
     }, 500);
 });
+
+// --- INICIAR AL CARGAR ---
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
+
+// Exportar para debugging
+window.AppState = AppState;
+window.loadDocument = loadDocument;
+window.loadSavedDocument = loadSavedDocument;
+
+console.log('✅ Anotador cargado y listo');
 // ========================================
 // PARCHE: FUNCIONES COMPARTIR, GUARDAR, BORRAR, CHATBOT
 // Añadir DESPUÉS de app.js
@@ -1346,17 +1360,3 @@ console.log('  • downloadDocument()');
 console.log('  • deleteDocument()');
 console.log('  • saveAnnotations()');
 console.log('  • sendQuestion()');
-
-// --- INICIAR AL CARGAR ---
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-} else {
-    init();
-}
-
-// Exportar para debugging
-window.AppState = AppState;
-window.loadDocument = loadDocument;
-window.loadSavedDocument = loadSavedDocument;
-
-console.log('✅ Anotador cargado y listo');
