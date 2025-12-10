@@ -10,6 +10,9 @@
     
     <!-- Iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Iro.js - Color Picker -->
+    <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
     
     <!-- Estilos -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
@@ -103,15 +106,31 @@
                     </div>
                 </div>
 
-                <!-- Paleta de Colores -->
+                <!-- Selector de Color MEJORADO -->
                 <div class="tool-group">
-                    <h4><i class="fas fa-palette"></i> Colores</h4>
-                    <div class="color-palette">
-                        <div class="color-btn active" style="background:#FFEB3B" data-color="#FFEB3B" aria-label="Amarillo" title="Amarillo"></div>
-                        <div class="color-btn" style="background:#F48FB1" data-color="#F48FB1" aria-label="Rosa" title="Rosa"></div>
-                        <div class="color-btn" style="background:#4CAF50" data-color="#4CAF50" aria-label="Verde" title="Verde"></div>
-                        <div class="color-btn" style="background:#2196F3" data-color="#2196F3" aria-label="Azul" title="Azul"></div>
-                        <div class="color-btn" style="background:#000000" data-color="#000000" aria-label="Negro" title="Negro"></div>
+                    <h4><i class="fas fa-palette"></i> Selector de Color</h4>
+                    
+                    <!-- Vista previa compacta -->
+                    <div class="color-preview-compact" id="colorPreviewCompact">
+                        <div class="current-color-display" id="currentColorDisplay" style="background: #FFEB3B;"></div>
+                        <div class="color-info-compact">
+                            <span id="hexDisplayCompact">#FFEB3B</span>
+                        </div>
+                        <button class="open-picker-btn" id="openColorPickerBtn">
+                            <i class="fas fa-palette"></i> Abrir Selector
+                        </button>
+                    </div>
+                    
+                    <!-- Colores rápidos siempre visibles -->
+                    <div class="color-palette-quick">
+                        <div class="color-btn-mini" style="background:#FFEB3B" data-color="#FFEB3B"></div>
+                        <div class="color-btn-mini" style="background:#F48FB1" data-color="#F48FB1"></div>
+                        <div class="color-btn-mini" style="background:#4CAF50" data-color="#4CAF50"></div>
+                        <div class="color-btn-mini" style="background:#2196F3" data-color="#2196F3"></div>
+                        <div class="color-btn-mini" style="background:#000000" data-color="#000000"></div>
+                        <div class="color-btn-mini" style="background:#FF5722" data-color="#FF5722"></div>
+                        <div class="color-btn-mini" style="background:#9C27B0" data-color="#9C27B0"></div>
+                        <div class="color-btn-mini" style="background:#00BCD4" data-color="#00BCD4"></div>
                     </div>
                 </div>
 
@@ -159,11 +178,11 @@
                     <div class="document-info-bar">
                         <h3 id="documentTitle">Documento</h3>
                         <div class="navigation-controls">
-                            <button id="prevPage" class="nav-btn" aria-label="Página anterior">
+                            <button id="prevPage" class="nav-btn" onclick="window.goToPrevPage()" aria-label="Página anterior">
                                 <i class="fas fa-chevron-left"></i>
                             </button>
                             <span id="pageInfo" class="page-info">1/1</span>
-                            <button id="nextPage" class="nav-btn" aria-label="Página siguiente">
+                            <button id="nextPage" class="nav-btn" onclick="window.goToNextPage()" aria-label="Página siguiente">
                                 <i class="fas fa-chevron-right"></i>
                             </button>
                         </div>
@@ -258,6 +277,39 @@
                 <div id="modalDocumentsList" class="documents-list">
                     <p class="no-documents">Sin documentos guardados</p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Selector de Color -->
+    <div class="color-picker-modal" id="colorPickerModal">
+        <div class="color-picker-modal-content">
+            <div class="color-picker-modal-header">
+                <h3><i class="fas fa-palette"></i> Selector de Color</h3>
+                <button class="modal-close" id="closeColorPicker">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="color-picker-modal-body">
+                <div id="colorPicker"></div>
+                
+                <div class="color-info">
+                    <div class="color-preview" id="colorPreview"></div>
+                    <div class="color-details">
+                        <div class="color-hex">
+                            <span>HEX:</span>
+                            <input type="text" id="hexInput" readonly value="#FFEB3B">
+                        </div>
+                        <div class="color-rgb">
+                            <span>RGB:</span>
+                            <span id="rgbValue">255, 235, 59</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="apply-color-btn" id="applyColorBtn">
+                    <i class="fas fa-check"></i> Aplicar Color
+                </button>
             </div>
         </div>
     </div>

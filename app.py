@@ -334,35 +334,147 @@ def ask_chatbot():
 # ==========================================
 
 def process_pdf(filepath):
-    """Procesar archivo PDF"""
+    """Procesar archivo PDF con fallback mejorado para Windows"""
+    
+    # INTENTO 1: pdf2image (funciona si poppler está instalado)
     try:
         from pdf2image import convert_from_path
         import pytesseract
-        from PIL import Image
         
-        # Convertir PDF a imágenes
-        images = convert_from_path(filepath, dpi=200)
+        print("📄 Intentando procesar con pdf2image...")
+        images = convert_from_path(filepath, dpi=150)
         
         image_data = []
         text_content = []
         
-        for img in images:
-            # Convertir a base64
+        for i, img in enumerate(images):
             buffered = BytesIO()
-            img.save(buffered, format="PNG")
+            img.save(buffered, format="PNG", optimize=True, quality=85)
             img_str = base64.b64encode(buffered.getvalue()).decode()
             image_data.append(f"data:image/png;base64,{img_str}")
             
-            # Extraer texto con OCR
-            text = pytesseract.image_to_string(img, lang='spa+eng')
-            text_content.append(text)
+            try:
+                text = pytesseract.image_to_string(img, lang='spa+eng')
+                text_content.append(text)
+            except:
+                text_content.append(f"[Página {i+1}]")
         
+        print(f"✅ PDF procesado con imágenes: {len(images)} páginas")
         return image_data, '\n\n'.join(text_content)
     
-    except ImportError:
-        print("pdf2image o pytesseract no instalado")
-        return [], "PDF procesado (instala pdf2image y pytesseract para OCR)"
-
+    except Exception as e:
+        print(f"⚠️ pdf2image no disponible: {e}")
+        print("📄 Usando fallback: creando imágenes desde texto...")
+    
+    # FALLBACK: Crear imágenes limpias desde el texto extraído
+    try:
+        import PyPDF2
+        from PIL import Image, ImageDraw, ImageFont
+        
+        print("📖 Extrayendo texto con PyPDF2...")
+        
+        # Extraer texto de todas las páginas
+        text_pages = []
+        with open(filepath, 'rb') as file:
+            reader = PyPDF2.PdfReader(file)
+            num_pages = len(reader.pages)
+            
+            for page_num, page in enumerate(reader.pages):
+                try:
+                    text = page.extract_text()
+                    if text.strip():
+                        text_pages.append(text.strip())
+                    else:
+                        text_pages.append(f"[Página {page_num + 1} - Sin texto extraíble]")
+                except Exception as e:
+                    text_pages.append(f"[Error en página {page_num + 1}]")
+        
+        if not text_pages:
+            text_pages = ["[PDF sin texto extraíble]"]
+        
+        print(f"📄 Creando {len(text_pages)} imágenes desde texto...")
+        
+        # Crear imágenes desde el texto
+        image_data = []
+        full_text_parts = []
+        
+        for page_num, page_text in enumerate(text_pages):
+            # Configuración de imagen
+            img_width = 850
+            img_height = 1100
+            margin = 60
+            line_height = 22
+            
+            # Crear imagen blanca
+            img = Image.new('RGB', (img_width, img_height), 'white')
+            draw = ImageDraw.Draw(img)
+            
+            # Intentar cargar fuente
+            try:
+                font_title = ImageFont.truetype("arial.ttf", 16)
+                font_text = ImageFont.truetype("arial.ttf", 12)
+            except:
+                try:
+                    font_title = ImageFont.truetype("C:\\Windows\\Fonts\\arial.ttf", 16)
+                    font_text = ImageFont.truetype("C:\\Windows\\Fonts\\arial.ttf", 12)
+                except:
+                    font_title = ImageFont.load_default()
+                    font_text = ImageFont.load_default()
+            
+            # Dibujar encabezado
+            header = f"=== PÁGINA {page_num + 1} / {len(text_pages)} ==="
+            draw.text((margin, 30), header, fill='#2196F3', font=font_title)
+            
+            # Dibujar línea separadora
+            draw.line([(margin, 60), (img_width - margin, 60)], fill='#e0e0e0', width=2)
+            
+            # Dibujar texto línea por línea
+            y = 80
+            max_chars = 85  # Caracteres por línea
+            
+            for line in page_text.split('\n'):
+                if not line.strip():
+                    y += line_height // 2
+                    continue
+                
+                # Dividir líneas largas
+                while line:
+                    if y > img_height - margin - 20:
+                        # Si no cabe, añadir "..."
+                        draw.text((margin, y), "... (continúa)", fill='#999', font=font_text)
+                        break
+                    
+                    chunk = line[:max_chars]
+                    line = line[max_chars:]
+                    
+                    draw.text((margin, y), chunk, fill='#333333', font=font_text)
+                    y += line_height
+                
+                if y > img_height - margin - 20:
+                    break
+            
+            # Dibujar pie de página
+            footer = f"Extraído de PDF - Página {page_num + 1}"
+            draw.text((margin, img_height - 30), footer, fill='#999999', font=font_text)
+            
+            # Convertir a base64
+            buffered = BytesIO()
+            img.save(buffered, format="PNG", optimize=True)
+            img_str = base64.b64encode(buffered.getvalue()).decode()
+            image_data.append(f"data:image/png;base64,{img_str}")
+            
+            full_text_parts.append(f"=== PÁGINA {page_num + 1} ===\n{page_text}")
+        
+        full_text = '\n\n'.join(full_text_parts)
+        
+        print(f"✅ Creadas {len(image_data)} imágenes desde texto extraído")
+        return image_data, full_text
+    
+    except Exception as e:
+        import traceback
+        print(f"❌ Error en fallback: {e}")
+        print(traceback.format_exc())
+        return [], f"Error al procesar PDF: {str(e)}\n\nEl archivo se cargó pero no se pudo visualizar."
 def process_docx(filepath):
     """Procesar archivo DOCX"""
     try:

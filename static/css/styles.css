@@ -361,6 +361,7 @@ input[type="range"] {
     transition: opacity var(--transition-base);
     cursor: pointer;
     -webkit-appearance: none;
+    appearance: none;
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -1473,4 +1474,1014 @@ html {
     background: linear-gradient(to top, rgba(0,0,0,0.1), transparent);
     z-index: 100;
     pointer-events: none;
+}
+
+/* ========================================
+   FIX: MODALES MÓVIL
+   ======================================== */
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal.open {
+    display: flex !important;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 2px solid #e1e4e8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-close {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: #f0f0f0;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #666;
+    transition: all 0.2s;
+}
+
+.modal-close:hover {
+    background: #e0e0e0;
+    color: #333;
+    transform: scale(1.1);
+}
+
+.modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* FAB buttons visibles solo en móvil */
+.fab-container {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .fab-container {
+        display: flex;
+    }
+}
+/* ========================================
+   COLOR PICKER PERSONALIZADO
+   ======================================== */
+
+.color-picker-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.color-picker-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid var(--border);
+    transition: all 0.2s;
+}
+
+.color-picker-wrapper:hover {
+    border-color: var(--primary);
+}
+
+.color-picker-input {
+    width: 50px;
+    height: 50px;
+    border: 3px solid #e1e4e8;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: none;
+    padding: 0;
+}
+
+.color-picker-input::-webkit-color-swatch-wrapper {
+    padding: 0;
+    border-radius: 50%;
+}
+
+.color-picker-input::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+.color-picker-input::-moz-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+.color-picker-input:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.color-picker-label {
+    flex: 1;
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+#currentColorHex {
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+@media (max-width: 767px) {
+    .color-picker-input {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .color-picker-wrapper {
+        padding: 10px;
+    }
+    
+    .color-picker-label {
+        font-size: 0.85rem;
+    }
+}
+/* ========================================
+   SELECTOR DE COLOR AVANZADO (IRO.JS)
+   ======================================== */
+
+.color-picker-container {
+    display: flex;
+    justify-content: center;
+    padding: 16px 0;
+    background: white;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    margin-bottom: 12px;
+}
+
+#colorPicker {
+    /* El widget de iro.js se renderiza aquí */
+    min-height: 200px;
+}
+
+.color-info {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    background: white;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid var(--border);
+    margin-bottom: 12px;
+}
+
+.color-preview {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 3px solid #e1e4e8;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    flex-shrink: 0;
+}
+
+.color-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.color-hex,
+.color-rgb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+}
+
+.color-hex span,
+.color-rgb span:first-child {
+    font-weight: 700;
+    color: var(--text-secondary);
+    min-width: 40px;
+}
+
+#hexInput {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--primary);
+    background: var(--bg-light);
+    width: 90px;
+}
+
+#rgbValue {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* Colores rápidos (plegables) */
+.quick-colors {
+    margin-top: 8px;
+}
+
+.quick-colors summary {
+    cursor: pointer;
+    padding: 8px;
+    background: var(--bg-light);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    list-style: none;
+    user-select: none;
+}
+
+.quick-colors summary::-webkit-details-marker {
+    display: none;
+}
+
+.quick-colors summary::before {
+    content: '▶ ';
+    display: inline-block;
+    transition: transform 0.2s;
+}
+
+.quick-colors[open] summary::before {
+    transform: rotate(90deg);
+}
+
+.quick-colors summary:hover {
+    background: var(--border);
+}
+
+.color-palette-quick {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 12px 8px 8px 8px;
+}
+
+.color-btn-mini {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.color-btn-mini:hover {
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.color-btn-mini:active {
+    transform: scale(0.95);
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+    .color-picker-container {
+        padding: 12px 0;
+    }
+    
+    .color-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .color-preview {
+        width: 100%;
+        height: 40px;
+        border-radius: 8px;
+    }
+    
+    #hexInput {
+        width: 100%;
+    }
+}
+/* ========================================
+   SELECTOR DE COLOR AVANZADO - RESPONSIVE
+   ======================================== */
+
+.color-picker-container {
+    display: flex;
+    justify-content: center;
+    padding: 16px 0;
+    background: white;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.color-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.color-preview {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 3px solid #ddd;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.color-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.color-hex, .color-rgb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+}
+
+.color-hex span, .color-rgb span {
+    font-weight: 600;
+    color: #666;
+    min-width: 40px;
+}
+
+#hexInput {
+    flex: 1;
+    padding: 4px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    background: white;
+    width: 90px;
+}
+
+#rgbValue {
+    font-family: 'Courier New', monospace;
+    color: #333;
+}
+
+.quick-colors {
+    margin-top: 8px;
+}
+
+.quick-colors summary {
+    cursor: pointer;
+    padding: 8px 12px;
+    background: #f0f0f0;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #555;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.quick-colors summary::-webkit-details-marker {
+    display: none;
+}
+
+.quick-colors summary::before {
+    content: '▶';
+    display: inline-block;
+    transition: transform 0.2s;
+}
+
+.quick-colors[open] summary::before {
+    transform: rotate(90deg);
+}
+
+.color-palette-quick {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding: 12px 0 4px 0;
+}
+
+.color-btn-mini {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.color-btn-mini:hover {
+    transform: scale(1.15);
+    border-color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.color-btn-mini.active {
+    border-color: white;
+    box-shadow: 0 0 0 3px var(--primary);
+}
+
+/* ========================================
+   RESPONSIVE: MÓVIL
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* Selector de color más pequeño */
+    .color-picker-container {
+        padding: 12px 0;
+    }
+    
+    /* Ajustar tamaño del widget iro.js en móvil */
+    #colorPicker .IroWheel,
+    #colorPicker .IroBox {
+        width: 160px !important;
+        height: 160px !important;
+    }
+    
+    #colorPicker .IroSlider {
+        width: 160px !important;
+        height: 20px !important;
+    }
+    
+    /* Preview horizontal en móvil */
+    .color-info {
+        flex-direction: row;
+        padding: 10px;
+    }
+    
+    .color-preview {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .color-details {
+        font-size: 0.8rem;
+    }
+    
+    #hexInput {
+        width: 75px;
+        font-size: 0.85rem;
+        padding: 3px 6px;
+    }
+    
+    /* Colores rápidos más compactos */
+    .color-palette-quick {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Extra pequeño (iPhone SE) */
+    #colorPicker .IroWheel,
+    #colorPicker .IroBox {
+        width: 140px !important;
+        height: 140px !important;
+    }
+    
+    #colorPicker .IroSlider {
+        width: 140px !important;
+        height: 18px !important;
+    }
+    
+    .color-info {
+        padding: 8px;
+        gap: 8px;
+    }
+    
+    .color-preview {
+        width: 35px;
+        height: 35px;
+    }
+    
+    #hexInput {
+        width: 70px;
+        font-size: 0.8rem;
+    }
+}
+/* ========================================
+   FIX: SELECTOR DE COLOR COMPLETO
+   ======================================== */
+
+.color-picker-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 12px;
+    background: white;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    margin-bottom: 12px;
+    min-height: 260px; /* Asegurar altura mínima */
+    overflow: visible !important; /* No cortar el widget */
+}
+
+#colorPicker {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Asegurar que el widget de iro.js sea visible */
+#colorPicker > div {
+    margin: 0 auto !important;
+}
+
+.color-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.color-preview {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 3px solid #ddd;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.color-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.color-hex, .color-rgb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+}
+
+.color-hex span, .color-rgb span {
+    font-weight: 600;
+    color: #666;
+    min-width: 40px;
+}
+
+#hexInput {
+    flex: 1;
+    padding: 4px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    background: white;
+    width: 90px;
+}
+
+#rgbValue {
+    font-family: 'Courier New', monospace;
+    color: #333;
+}
+
+.quick-colors {
+    margin-top: 8px;
+}
+
+.quick-colors summary {
+    cursor: pointer;
+    padding: 8px 12px;
+    background: #f0f0f0;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #555;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.quick-colors summary::-webkit-details-marker {
+    display: none;
+}
+
+.quick-colors summary::before {
+    content: '▶';
+    display: inline-block;
+    transition: transform 0.2s;
+}
+
+.quick-colors[open] summary::before {
+    transform: rotate(90deg);
+}
+
+.color-palette-quick {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding: 12px 0 4px 0;
+}
+
+.color-btn-mini {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.color-btn-mini:hover {
+    transform: scale(1.15);
+    border-color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.color-btn-mini.active {
+    border-color: white;
+    box-shadow: 0 0 0 3px var(--primary);
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+    .color-picker-container {
+        padding: 16px 8px;
+        min-height: 220px;
+    }
+    
+    .color-info {
+        padding: 10px;
+    }
+    
+    .color-preview {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .color-picker-container {
+        padding: 12px 8px;
+        min-height: 200px;
+    }
+    
+    .color-preview {
+        width: 35px;
+        height: 35px;
+    }
+    
+    #hexInput {
+        width: 70px;
+        font-size: 0.8rem;
+    }
+}
+/* ========================================
+   SELECTOR DE COLOR COMPACTO
+   ======================================== */
+
+.color-preview-compact {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    border: 2px solid var(--border);
+    margin-bottom: 12px;
+}
+
+.current-color-display {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid #ddd;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.color-info-compact {
+    flex: 1;
+}
+
+#hexDisplayCompact {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #333;
+}
+
+.open-picker-btn {
+    padding: 8px 16px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.open-picker-btn:hover {
+    background: #3651d4;
+    transform: translateY(-1px);
+}
+
+.open-picker-btn:active {
+    transform: translateY(0);
+}
+
+/* ========================================
+   MODAL SELECTOR DE COLOR
+   ======================================== */
+
+.color-picker-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.color-picker-modal.open {
+    display: flex;
+    opacity: 1;
+}
+
+.color-picker-modal-content {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    max-width: 90%;
+    width: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.color-picker-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.color-picker-modal-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.color-picker-modal-body {
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+#colorPicker {
+    margin: 0 auto;
+}
+
+.color-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    width: 100%;
+}
+
+.color-preview {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 3px solid #ddd;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.color-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.color-hex, .color-rgb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+}
+
+.color-hex span, .color-rgb span {
+    font-weight: 600;
+    color: #666;
+    min-width: 40px;
+}
+
+#hexInput {
+    flex: 1;
+    padding: 4px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    background: white;
+}
+
+#rgbValue {
+    font-family: 'Courier New', monospace;
+    color: #333;
+}
+
+.apply-color-btn {
+    width: 100%;
+    padding: 12px 24px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.apply-color-btn:hover {
+    background: #3651d4;
+}
+
+/* ========================================
+   COLORES RÁPIDOS
+   ======================================== */
+
+.color-palette-quick {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding: 0;
+}
+
+.color-btn-mini {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.color-btn-mini:hover {
+    transform: scale(1.15);
+    border-color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.color-btn-mini.active {
+    border-color: white;
+    box-shadow: 0 0 0 3px var(--primary);
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 480px) {
+    .color-picker-modal-content {
+        width: 95%;
+    }
+    
+    .color-preview-compact {
+        flex-wrap: wrap;
+    }
+    
+    .open-picker-btn {
+        width: 100%;
+        justify-content: center;
+    }
 }
